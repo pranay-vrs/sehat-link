@@ -198,10 +198,10 @@ export function App() {
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
           <div className="flex items-center gap-2 text-slate-700 font-semibold">
             <HeartPulse className="w-4 h-4 text-teal-700" />
-            <span>SEHAT-LINK — Rural Healthcare Referral Continuity Platform</span>
+            <span>{t.appTitle} — {t.appSubtitle}</span>
           </div>
           <p className="text-slate-400 text-[11px]">
-            Smart India Hackathon 2026 · PS 26133 · Government of Maharashtra
+            {t.sihTag} · {t.govtAffiliation}
           </p>
         </div>
       </footer>

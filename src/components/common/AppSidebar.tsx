@@ -493,8 +493,8 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
       {/* Sidebar Footer: Guarantee & Sign Out */}
       <div className="pt-4 border-t border-slate-200 space-y-2">
         <div className="bg-teal-50 border border-teal-200/60 p-2.5 rounded-xl text-[11px] text-teal-900">
-          <span className="font-bold block">Care Guarantee</span>
-          <span className="text-teal-700 text-[10px]">No referral abandoned. Every drop-off recorded.</span>
+          <span className="font-bold block">{t.careGuaranteeTitle}</span>
+          <span className="text-teal-700 text-[10px]">{t.careGuaranteeDesc}</span>
         </div>
         <button
           onClick={logout}

@@ -37,7 +37,7 @@ export const OfflineBanner: React.FC = () => {
           ) : (
             <>
               <AlertCircle className="w-4 h-4 text-teal-200" />
-              <span>Reconnected online. {syncQueue.length} local actions ready for reconciliation.</span>
+              <span>{t.reconnectedOnline} ({syncQueue.length})</span>
             </>
           )}
         </div>
@@ -46,18 +46,18 @@ export const OfflineBanner: React.FC = () => {
           {isOffline ? (
             <button
               onClick={toggleOffline}
-              className="px-2.5 py-1 bg-white text-amber-900 rounded font-semibold hover:bg-amber-50 active:scale-95 transition-transform"
+              className="px-2.5 py-1 bg-white text-amber-900 rounded font-semibold hover:bg-amber-50 active:scale-95 transition-transform cursor-pointer"
             >
-              Simulate Network Reconnect
+              {t.simulateReconnect}
             </button>
           ) : (
             <button
               onClick={handleManualSync}
               disabled={isSyncing}
-              className="flex items-center gap-1.5 px-3 py-1 bg-white text-teal-900 rounded font-semibold hover:bg-teal-50 active:scale-95 transition-transform disabled:opacity-75"
+              className="flex items-center gap-1.5 px-3 py-1 bg-white text-teal-900 rounded font-semibold hover:bg-teal-50 active:scale-95 transition-transform disabled:opacity-75 cursor-pointer"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? 'animate-spin' : ''}`} />
-              <span>{isSyncing ? 'Syncing...' : 'Sync Now'}</span>
+              <span>{isSyncing ? t.syncing : t.syncNow}</span>
             </button>
           )}
         </div>

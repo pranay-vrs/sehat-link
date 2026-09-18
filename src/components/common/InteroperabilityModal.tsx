@@ -36,10 +36,10 @@ export const InteroperabilityModal: React.FC<InteroperabilityModalProps> = ({ is
             </div>
             <div>
               <h3 className="font-bold text-base text-white">
-                FHIR / ABDM Interoperability Architecture
+                {language === 'mr' ? 'FHIR / ABDM आंतरकार्यक्षमता वास्तुकला' : language === 'hi' ? 'FHIR / ABDM इंटरऑपरेबिलिटी आर्किटेक्चर' : 'FHIR / ABDM Interoperability Architecture'}
               </h3>
               <p className="text-xs text-teal-400 font-medium">
-                Prototype Mock Integration Layer (SIH 2026 PS-26133)
+                {language === 'mr' ? 'प्रोटोटाइप मॉक एकत्रीकरण स्तर (SIH २०२६ PS-26133)' : language === 'hi' ? 'प्रोटोटाइप मॉक इंटीग्रेशन लेयर (SIH 2026 PS-26133)' : 'Prototype Mock Integration Layer (SIH 2026 PS-26133)'}
               </p>
             </div>
           </div>
@@ -55,8 +55,12 @@ export const InteroperabilityModal: React.FC<InteroperabilityModalProps> = ({ is
         <div className="p-4 bg-amber-950/40 border-b border-amber-900/50 flex items-start gap-3">
           <ShieldAlert className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
           <div className="text-xs text-amber-200/90 leading-relaxed">
-            <span className="font-bold text-amber-300">Prototype Disclaimer: </span>
-            This data layer is engineered to follow HL7 FHIR (Fast Healthcare Interoperability Resources) R4 specifications. Future phases can connect directly to National Health Authority (NHA) ABDM M1, M2, and M3 APIs and eSanjeevani gateways.
+            <span className="font-bold text-amber-300">{language === 'mr' ? 'प्रोटोटाइप अस्वीकरण: ' : language === 'hi' ? 'प्रोटोटाइप अस्वीकरण: ' : 'Prototype Disclaimer: '}</span>
+            {language === 'mr' 
+              ? 'हा डेटा स्तर HL7 FHIR R4 मानकांचे पालन करतो. पुढील टप्प्यांत राष्ट्रीय आरोग्य प्राधिकरणाच्या (NHA) ABDM M1, M2, M3 API आणि ई-संजीवनीशी थेट जोडले जाऊ शकते.' 
+              : language === 'hi' 
+                ? 'यह डेटा लेयर HL7 FHIR R4 विनिर्देशों का पालन करता है। भविष्य के चरणों में राष्ट्रीय स्वास्थ्य प्राधिकरण (NHA) ABDM M1, M2, और M3 एपीआई से सीधा जोड़ा जा सकता है।' 
+                : 'This data layer is engineered to follow HL7 FHIR (Fast Healthcare Interoperability Resources) R4 specifications. Future phases can connect directly to National Health Authority (NHA) ABDM M1, M2, and M3 APIs and eSanjeevani gateways.'}
           </div>
         </div>
 
@@ -65,7 +69,7 @@ export const InteroperabilityModal: React.FC<InteroperabilityModalProps> = ({ is
           {/* Architecture Mapping Diagram */}
           <div className="p-3.5 bg-slate-950 rounded-xl border border-slate-800 font-mono text-xs text-slate-300 space-y-1">
             <div className="text-[11px] text-teal-400 font-bold uppercase tracking-wider mb-1">
-              Data Flow Architecture:
+              {language === 'mr' ? 'डेटा प्रवाह वास्तुकला:' : language === 'hi' ? 'डेटा प्रवाह आर्किटेक्चर:' : 'Data Flow Architecture:'}
             </div>
             <div className="text-slate-400">
               [SEHAT-LINK Continuum Layer] ➔ [FHIR Resource Transformer] ➔ [Future ABDM Gateway]
@@ -96,7 +100,7 @@ export const InteroperabilityModal: React.FC<InteroperabilityModalProps> = ({ is
               className="absolute top-3 right-3 px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-[11px] font-sans flex items-center gap-1 border border-slate-700 transition-colors"
             >
               {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-              <span>{copied ? 'Copied' : 'Copy JSON'}</span>
+              <span>{copied ? (language === 'mr' ? 'कॉपी केले' : language === 'hi' ? 'कॉपी हो गया' : 'Copied') : (language === 'mr' ? 'JSON कॉपी करा' : language === 'hi' ? 'JSON कॉपी करें' : 'Copy JSON')}</span>
             </button>
             <pre className="pr-16">
               {JSON.stringify(currentResource, null, 2)}
@@ -107,7 +111,7 @@ export const InteroperabilityModal: React.FC<InteroperabilityModalProps> = ({ is
         {/* Footer */}
         <div className="p-4 bg-slate-950 border-t border-slate-800 flex items-center justify-between">
           <span className="text-xs text-slate-400">
-            Standard: HL7 FHIR Release 4
+            {language === 'mr' ? 'मानक: HL7 FHIR रिलीज ४' : language === 'hi' ? 'मानक: HL7 FHIR रिलीज 4' : 'Standard: HL7 FHIR Release 4'}
           </span>
           <button
             onClick={onClose}

@@ -1,13 +1,15 @@
 import React from 'react';
 import { AlertTriangle, CheckCircle2, Clock, Bell, X } from 'lucide-react';
 import { useReferralStore } from '../../store/referralStore';
+import { translations } from '../../data/translations';
 
 interface NotificationMenuProps {
   onClose: () => void;
 }
 
 export const NotificationMenu: React.FC<NotificationMenuProps> = ({ onClose }) => {
-  const { getScopedNotifications, markNotificationRead, selectReferral } = useReferralStore();
+  const { getScopedNotifications, markNotificationRead, selectReferral, language } = useReferralStore();
+  const t = translations[language];
   const notifications = getScopedNotifications();
 
   return (
@@ -15,7 +17,7 @@ export const NotificationMenu: React.FC<NotificationMenuProps> = ({ onClose }) =
       <div className="flex items-center justify-between px-4 pb-2 border-b border-slate-100">
         <div className="flex items-center gap-2">
           <Bell className="w-4 h-4 text-teal-700" />
-          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700">Notifications Feed</h3>
+          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700">{t.notificationsFeed}</h3>
         </div>
         <button 
           onClick={onClose}
@@ -27,7 +29,7 @@ export const NotificationMenu: React.FC<NotificationMenuProps> = ({ onClose }) =
 
       <div className="max-h-80 overflow-y-auto divide-y divide-slate-100">
         {notifications.length === 0 ? (
-          <p className="text-xs text-slate-500 p-4 text-center">No active notifications</p>
+          <p className="text-xs text-slate-500 p-4 text-center">{t.noNotifications}</p>
         ) : (
           notifications.map((notif) => (
             <div

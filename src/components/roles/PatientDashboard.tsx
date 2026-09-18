@@ -66,7 +66,7 @@ export const PatientDashboard: React.FC<PatientDashboardProps> = ({
             {t.personalHealthAccount}
           </span>
           <span className="text-[11px] px-2 py-0.5 rounded-full bg-teal-900 border border-teal-700 font-mono text-teal-200">
-            Care Thread #{activeReferral.careThreadId}
+            {t.careThreadPrefix}{activeReferral.careThreadId}
           </span>
         </div>
 
@@ -130,7 +130,7 @@ export const PatientDashboard: React.FC<PatientDashboardProps> = ({
                       🏥 {activeReferral.destinationFacility}
                     </h4>
                     <p className="text-xs text-teal-800 font-medium">
-                      Consultation with <strong>{activeReferral.assignedDoctor || 'Dr. Sharma'}</strong>
+                      {t.attendingPhysician} <strong>{activeReferral.assignedDoctor || 'Dr. Sharma'}</strong>
                     </p>
                   </div>
                 </div>
@@ -140,7 +140,7 @@ export const PatientDashboard: React.FC<PatientDashboardProps> = ({
               <div className="bg-white p-3 rounded-xl border border-teal-200/80 flex items-center justify-between text-xs">
                 <div className="flex items-center gap-2 text-slate-700">
                   <Calendar className="w-4 h-4 text-teal-600" />
-                  <span>Scheduled Time: <strong>{activeReferral.scheduledTime || 'Tomorrow · 10:30 AM'}</strong></span>
+                  <span>{t.scheduledTimeLabel} <strong>{activeReferral.scheduledTime || t.today}</strong></span>
                 </div>
                 {onTabChange && (
                   <button
@@ -216,7 +216,7 @@ export const PatientDashboard: React.FC<PatientDashboardProps> = ({
                       </span>
                       {isCurrent && (
                         <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-teal-600 text-white">
-                          Current Step
+                          {t.currentStep}
                         </span>
                       )}
                     </div>
@@ -250,13 +250,13 @@ export const PatientDashboard: React.FC<PatientDashboardProps> = ({
             <div className="flex items-start justify-between">
               <div>
                 <span className="text-[10px] font-mono font-bold text-teal-700 uppercase bg-teal-50 px-2 py-0.5 rounded-md border border-teal-200">
-                  Care Thread #{activeReferral.careThreadId}
+                  {t.careThreadPrefix}{activeReferral.careThreadId}
                 </span>
                 <h3 className="text-base font-bold text-slate-900 mt-1">
-                  Referral #{activeReferral.id}
+                  {t.refPrefix}{activeReferral.id}
                 </h3>
                 <p className="text-xs text-slate-500">
-                  Created by {activeReferral.createdBy} on {activeReferral.createdAt}
+                  {t.initiatedBy} {activeReferral.createdBy} · {activeReferral.createdAt}
                 </p>
               </div>
               <StatusBadge status={activeReferral.status} />
@@ -264,26 +264,26 @@ export const PatientDashboard: React.FC<PatientDashboardProps> = ({
 
             {/* Diagnostic Clinical Summary */}
             <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-2xl space-y-2">
-              <h4 className="text-xs font-bold text-slate-800">Reason for Referral:</h4>
+              <h4 className="text-xs font-bold text-slate-800">{t.reasonForReferral}</h4>
               <p className="text-xs text-slate-700">{activeReferral.referralReason}</p>
-              <p className="text-xs text-slate-500 italic">Clinical triage: {activeReferral.priorityReason}</p>
+              <p className="text-xs text-slate-500 italic">{t.clinicalTriage} {activeReferral.priorityReason}</p>
 
               {activeReferral.vitals && (
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-slate-200/80 text-[11px]">
                   <div className="bg-white p-2 rounded-lg border border-slate-200 text-center">
-                    <span className="text-slate-400 block text-[10px]">Temp</span>
+                    <span className="text-slate-400 block text-[10px]">{t.tempLabel}</span>
                     <strong className="text-slate-800">{activeReferral.vitals.temperature || '98.6 °F'}</strong>
                   </div>
                   <div className="bg-white p-2 rounded-lg border border-slate-200 text-center">
-                    <span className="text-slate-400 block text-[10px]">BP</span>
+                    <span className="text-slate-400 block text-[10px]">{t.bpLabel}</span>
                     <strong className="text-slate-800">{activeReferral.vitals.bp || '120/80'}</strong>
                   </div>
                   <div className="bg-white p-2 rounded-lg border border-slate-200 text-center">
-                    <span className="text-slate-400 block text-[10px]">SpO2</span>
+                    <span className="text-slate-400 block text-[10px]">{t.spo2Label}</span>
                     <strong className="text-slate-800">{activeReferral.vitals.spo2 || '98%'}</strong>
                   </div>
                   <div className="bg-white p-2 rounded-lg border border-slate-200 text-center">
-                    <span className="text-slate-400 block text-[10px]">Pulse</span>
+                    <span className="text-slate-400 block text-[10px]">{t.pulseLabel}</span>
                     <strong className="text-slate-800">{activeReferral.vitals.pulse || '78 bpm'}</strong>
                   </div>
                 </div>
@@ -293,7 +293,7 @@ export const PatientDashboard: React.FC<PatientDashboardProps> = ({
             {/* Referral Event Trajectory */}
             <div className="space-y-3 pt-2">
               <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
-                Event Timeline
+                {t.eventTimeline}
               </h4>
               <div className="space-y-3 relative before:absolute before:inset-0 before:left-3.5 before:w-0.5 before:bg-slate-200">
                 {activeReferral.events.map((evt) => (
@@ -337,22 +337,22 @@ export const PatientDashboard: React.FC<PatientDashboardProps> = ({
                     {activeReferral.destinationFacility}
                   </h4>
                   <p className="text-xs text-teal-800">
-                    Attending Physician: <strong>{activeReferral.assignedDoctor || 'Dr. Sharma'}</strong>
+                    {t.attendingPhysician} <strong>{activeReferral.assignedDoctor || 'Dr. Sharma'}</strong>
                   </p>
                 </div>
                 <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-teal-600 text-white">
-                  Confirmed
+                  {t.confirmedBadge}
                 </span>
               </div>
 
               <div className="flex flex-wrap gap-4 text-xs text-slate-700 bg-white p-3 rounded-xl border border-teal-200/80">
                 <div className="flex items-center gap-1.5">
                   <Clock className="w-4 h-4 text-teal-600" />
-                  <span>Time: <strong>{activeReferral.scheduledTime || 'Tomorrow · 10:30 AM'}</strong></span>
+                  <span>{t.timeLabel} <strong>{activeReferral.scheduledTime || t.today}</strong></span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <MapPin className="w-4 h-4 text-teal-600" />
-                  <span>Distance: <strong>3.2 km from village</strong></span>
+                  <span>{t.distanceLabel} <strong>3.2 km {t.fromVillage}</strong></span>
                 </div>
               </div>
 
@@ -371,7 +371,7 @@ export const PatientDashboard: React.FC<PatientDashboardProps> = ({
                   className="py-2 px-4 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-colors"
                 >
                   <Phone className="w-3.5 h-3.5" />
-                  <span>Call Hospital</span>
+                  <span>{t.callHospital}</span>
                 </a>
               </div>
             </div>
@@ -388,7 +388,7 @@ export const PatientDashboard: React.FC<PatientDashboardProps> = ({
           <div className="bg-gradient-to-tr from-slate-900 via-teal-950 to-slate-900 text-white p-5 rounded-3xl border border-teal-800 shadow-md space-y-3">
             <div className="flex items-center justify-between">
               <span className="text-[10px] uppercase font-bold tracking-widest text-teal-400">
-                Ayushman Bharat Health Account (ABHA)
+                {t.abhaFullTitle}
               </span>
               <ShieldCheck className="w-5 h-5 text-emerald-400" />
             </div>
@@ -400,22 +400,22 @@ export const PatientDashboard: React.FC<PatientDashboardProps> = ({
             </div>
             <div className="pt-2 border-t border-teal-900/80 flex items-center justify-between text-[10px] text-slate-400">
               <span>DOB: 12 Apr 1992 · Male</span>
-              <span className="text-teal-400">Linked to Sehat-Link</span>
+              <span className="text-teal-400">{t.linkedToSehatLink}</span>
             </div>
           </div>
 
           {/* Past Consultations */}
           <div className="bg-white rounded-3xl border border-slate-200 p-5 shadow-sm space-y-3">
             <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
-              Diagnostic & Clinical History
+              {t.diagnosticHistory}
             </h4>
             <div className="p-3 bg-slate-50 border border-slate-200 rounded-2xl space-y-1 text-xs">
               <div className="flex items-center justify-between">
-                <strong className="text-slate-900">Acute Bronchial Congestion</strong>
+                <strong className="text-slate-900">{t.pastDiagnosisTitle}</strong>
                 <span className="text-slate-400 text-[10px]">10 Sep 2026</span>
               </div>
               <p className="text-slate-600 text-[11px]">
-                Primary assessment conducted by ASHA Sunita Devi. Referred to PHC Kashele for chest auscultation.
+                {t.pastDiagnosisDesc}
               </p>
             </div>
           </div>
@@ -429,27 +429,27 @@ export const PatientDashboard: React.FC<PatientDashboardProps> = ({
         <div className="bg-white rounded-3xl border border-slate-200 p-5 shadow-sm space-y-4">
           <h3 className="font-bold text-sm text-slate-900 flex items-center gap-2">
             <User className="w-4 h-4 text-teal-600" />
-            <span>{t.personalHealthAccount} Details</span>
+            <span>{t.personalHealthAccountDetails}</span>
           </h3>
 
           <div className="space-y-3 text-xs">
             <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1">
-              <span className="text-[10px] text-slate-400 uppercase font-bold">Full Name</span>
+              <span className="text-[10px] text-slate-400 uppercase font-bold">{t.fullName}</span>
               <p className="font-bold text-slate-900">{currentUser?.name}</p>
             </div>
 
             <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1">
-              <span className="text-[10px] text-slate-400 uppercase font-bold">Mobile & ABHA</span>
+              <span className="text-[10px] text-slate-400 uppercase font-bold">{t.mobilePhone} & ABHA</span>
               <p className="font-bold text-slate-900">{currentUser?.phone} · ABHA {currentUser?.abhaId}</p>
             </div>
 
             <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1">
-              <span className="text-[10px] text-slate-400 uppercase font-bold">Village Jurisdiction</span>
+              <span className="text-[10px] text-slate-400 uppercase font-bold">{t.villageJurisdiction}</span>
               <p className="text-slate-700">{currentUser?.village}, {currentUser?.district}</p>
             </div>
 
             <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1">
-              <span className="text-[10px] text-slate-400 uppercase font-bold">Assigned Frontline Worker</span>
+              <span className="text-[10px] text-slate-400 uppercase font-bold">{t.assignedFrontlineWorker}</span>
               <p className="font-bold text-teal-800">ASHA Sunita Devi (+91 98221 00000)</p>
             </div>
           </div>

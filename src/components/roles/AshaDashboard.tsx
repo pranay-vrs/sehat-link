@@ -124,7 +124,7 @@ export const AshaDashboard: React.FC<AshaDashboardProps> = ({
               <div className="text-2xl font-black text-slate-900">
                 {ashaReferrals.length}
               </div>
-              <span className="text-[10px] text-teal-700 font-medium">Assigned cohort</span>
+              <span className="text-[10px] text-teal-700 font-medium">{t.assignedCohort}</span>
             </div>
 
             <div 
@@ -138,7 +138,7 @@ export const AshaDashboard: React.FC<AshaDashboardProps> = ({
               <div className="text-2xl font-black text-slate-900">
                 {pendingReferrals.length}
               </div>
-              <span className="text-[10px] text-slate-500">In facility pipeline</span>
+              <span className="text-[10px] text-slate-500">{t.inFacilityPipeline}</span>
             </div>
 
             <div 
@@ -152,7 +152,7 @@ export const AshaDashboard: React.FC<AshaDashboardProps> = ({
               <div className="text-2xl font-black text-emerald-700">
                 {followUpReferrals.length}
               </div>
-              <span className="text-[10px] text-emerald-600 font-medium">Home visits due</span>
+              <span className="text-[10px] text-emerald-600 font-medium">{t.homeVisitsDue}</span>
             </div>
 
             <div 
@@ -166,7 +166,7 @@ export const AshaDashboard: React.FC<AshaDashboardProps> = ({
               <div className="text-2xl font-black text-amber-900">
                 {atRiskReferrals.length}
               </div>
-              <span className="text-[10px] text-amber-700 font-bold animate-pulse">Action required</span>
+              <span className="text-[10px] text-amber-700 font-bold animate-pulse">{t.actionRequired}</span>
             </div>
           </div>
 
@@ -194,16 +194,16 @@ export const AshaDashboard: React.FC<AshaDashboardProps> = ({
               <div className="bg-white p-3.5 rounded-2xl border border-amber-300/80 text-xs space-y-1.5">
                 <div className="flex items-center justify-between">
                   <strong className="text-amber-900">
-                    ⚠️ {priorityAtRiskCase.failureReason ? t[('reason' + priorityAtRiskCase.failureReason.charAt(0).toUpperCase() + priorityAtRiskCase.failureReason.slice(1)) as keyof typeof t] || priorityAtRiskCase.failureReason : 'Transit Delayed'}
+                    ⚠️ {priorityAtRiskCase.failureReason ? t[('reason' + priorityAtRiskCase.failureReason.charAt(0).toUpperCase() + priorityAtRiskCase.failureReason.slice(1)) as keyof typeof t] || priorityAtRiskCase.failureReason : t.transitDelayed}
                   </strong>
-                  <span className="text-slate-500 text-[11px]">Destination: {priorityAtRiskCase.destinationFacility}</span>
+                  <span className="text-slate-500 text-[11px]">{t.destination}: {priorityAtRiskCase.destinationFacility}</span>
                 </div>
                 <p className="text-slate-700">
-                  {priorityAtRiskCase.failureNotes || priorityAtRiskCase.atRiskReason || 'Transit delayed. Patient has not arrived at facility.'}
+                  {priorityAtRiskCase.failureNotes || priorityAtRiskCase.atRiskReason || t.transitDelayed}
                 </p>
                 {priorityAtRiskCase.suggestedAction && (
                   <div className="p-2 bg-teal-50 border border-teal-200 rounded-xl text-teal-900 text-[11px]">
-                    💡 <strong>Suggested Intervention:</strong> {priorityAtRiskCase.suggestedAction}
+                    💡 <strong>{t.suggestedIntervention}</strong> {priorityAtRiskCase.suggestedAction}
                   </div>
                 )}
               </div>
@@ -247,7 +247,7 @@ export const AshaDashboard: React.FC<AshaDashboardProps> = ({
                 <UserPlus className="w-5 h-5" />
                 <div className="text-left">
                   <span className="block">{t.registerPatient}</span>
-                  <span className="text-[10px] text-teal-200 font-normal">Add citizen to cohort</span>
+                  <span className="text-[10px] text-teal-200 font-normal">{t.addCitizenCohort}</span>
                 </div>
               </div>
               <ArrowRight className="w-4 h-4 text-teal-300" />
@@ -261,7 +261,7 @@ export const AshaDashboard: React.FC<AshaDashboardProps> = ({
                 <Search className="w-5 h-5 text-teal-700" />
                 <div className="text-left">
                   <span className="block">{t.startAssessment}</span>
-                  <span className="text-[10px] text-slate-500 font-normal">7-step protocol triage</span>
+                  <span className="text-[10px] text-slate-500 font-normal">{t.protocolTriage}</span>
                 </div>
               </div>
               <ArrowRight className="w-4 h-4 text-slate-400" />
@@ -275,7 +275,7 @@ export const AshaDashboard: React.FC<AshaDashboardProps> = ({
                 <Activity className="w-5 h-5 text-teal-700" />
                 <div className="text-left">
                   <span className="block">{t.navReferrals}</span>
-                  <span className="text-[10px] text-slate-500 font-normal">Inspect Care Threads</span>
+                  <span className="text-[10px] text-slate-500 font-normal">{t.inspectCareThreads}</span>
                 </div>
               </div>
               <ArrowRight className="w-4 h-4 text-slate-400" />
@@ -309,14 +309,14 @@ export const AshaDashboard: React.FC<AshaDashboardProps> = ({
           <div className="bg-white rounded-3xl border border-slate-200 p-5 shadow-sm space-y-3">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-bold text-slate-900">
-                Recent Patient Referrals
+                {t.recentPatientReferrals}
               </h3>
               {onTabChange && (
                 <button
                   onClick={() => onTabChange('referrals')}
                   className="text-xs font-bold text-teal-700 hover:text-teal-900 cursor-pointer"
                 >
-                  View All ({ashaReferrals.length})
+                  {t.viewAll} ({ashaReferrals.length})
                 </button>
               )}
             </div>
@@ -338,7 +338,7 @@ export const AshaDashboard: React.FC<AshaDashboardProps> = ({
                       <span className="text-[10px] font-mono text-teal-700 font-bold">#{ref.careThreadId}</span>
                     </div>
                     <p className="text-[11px] text-slate-600 truncate max-w-xs sm:max-w-md">
-                      Target: {ref.destinationFacility} · {ref.referralReason}
+                      {t.destination}: {ref.destinationFacility} · {ref.referralReason}
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
@@ -359,8 +359,8 @@ export const AshaDashboard: React.FC<AshaDashboardProps> = ({
         <div className="space-y-4">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-white p-5 rounded-3xl border border-slate-200 shadow-sm">
             <div>
-              <h3 className="text-base font-bold text-slate-900">{t.navPatients} (Kashele Cohort)</h3>
-              <p className="text-xs text-slate-500">Assigned village residents under ASHA Sunita Devi</p>
+              <h3 className="text-base font-bold text-slate-900">{t.navPatients}</h3>
+              <p className="text-xs text-slate-500">{t.assignedPatients}</p>
             </div>
             <button
               onClick={onNewCase}
@@ -378,7 +378,7 @@ export const AshaDashboard: React.FC<AshaDashboardProps> = ({
               type="text"
               value={patientSearchQuery}
               onChange={e => setPatientSearchQuery(e.target.value)}
-              placeholder="Search by patient name, phone, or village..."
+              placeholder={t.searchPatientPlaceholder}
               className="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-2xl text-xs text-slate-800 focus:outline-hidden focus:border-teal-500 shadow-xs"
             />
           </div>
@@ -404,7 +404,7 @@ export const AshaDashboard: React.FC<AshaDashboardProps> = ({
                     onClick={onNewCase}
                     className="px-2.5 py-1 bg-teal-50 hover:bg-teal-100 text-teal-800 font-bold rounded-lg border border-teal-200/80 text-[11px] cursor-pointer"
                   >
-                    + Refer
+                    + {t.createReferral}
                   </button>
                 </div>
               </div>
@@ -423,13 +423,13 @@ export const AshaDashboard: React.FC<AshaDashboardProps> = ({
               <h3 className="text-base font-bold text-slate-900">
                 {t.navReferrals} ({ashaReferrals.length})
               </h3>
-              <span className="text-xs text-slate-500">From Sub-Centre Kashele</span>
+              <span className="text-xs text-slate-500">{currentUser?.facility || 'Sub-Centre Kashele'}</span>
             </div>
 
             {/* Status Filter Tabs */}
             <div className="flex gap-1.5 overflow-x-auto pb-1 text-xs">
               {[
-                { id: 'all', label: 'All Cases' },
+                { id: 'all', label: t.allCases },
                 { id: 'created', label: t.statusCreated },
                 { id: 'accepted', label: t.statusAccepted },
                 { id: 'scheduled', label: t.statusScheduled },
@@ -465,7 +465,7 @@ export const AshaDashboard: React.FC<AshaDashboardProps> = ({
                       <span className="text-xs font-mono font-bold text-teal-700">#{ref.careThreadId}</span>
                     </div>
                     <p className="text-xs text-slate-600 mt-0.5">
-                      Destination: <strong>{ref.destinationFacility}</strong> · {ref.referralReason}
+                      {t.destination}: <strong>{ref.destinationFacility}</strong> · {ref.referralReason}
                     </p>
                   </div>
                   <StatusBadge status={ref.status} isAtRisk={ref.isAtRisk} />
@@ -474,8 +474,8 @@ export const AshaDashboard: React.FC<AshaDashboardProps> = ({
                 {/* Event Tracker Snippet */}
                 <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs space-y-1">
                   <div className="flex items-center justify-between text-slate-500 text-[11px]">
-                    <span>Created: {ref.createdAt}</span>
-                    <span className="font-bold text-teal-800">Priority: {ref.priority.toUpperCase()}</span>
+                    <span>{t.stageCreated}: {ref.createdAt}</span>
+                    <span className="font-bold text-teal-800">{t.priority}: {ref.priority === 'urgent' ? t.urgent : t.routine}</span>
                   </div>
                   {ref.isAtRisk && (
                     <p className="text-amber-800 font-semibold text-[11px]">
@@ -505,7 +505,7 @@ export const AshaDashboard: React.FC<AshaDashboardProps> = ({
                     className="py-1.5 px-3 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 rounded-lg text-xs font-bold flex items-center gap-1 transition-colors ml-auto"
                   >
                     <Phone className="w-3.5 h-3.5" />
-                    <span>Call</span>
+                    <span>{t.call}</span>
                   </a>
                 </div>
               </div>
@@ -542,7 +542,7 @@ export const AshaDashboard: React.FC<AshaDashboardProps> = ({
                     <h4 className="text-base font-bold text-slate-900 mt-0.5">
                       {ref.patient.name} · #{ref.careThreadId}
                     </h4>
-                    <p className="text-xs text-slate-500">Destination: {ref.destinationFacility}</p>
+                    <p className="text-xs text-slate-500">{t.destination}: {ref.destinationFacility}</p>
                   </div>
                   <StatusBadge status={ref.status} isAtRisk={true} />
                 </div>
@@ -557,7 +557,7 @@ export const AshaDashboard: React.FC<AshaDashboardProps> = ({
                   <p className="text-slate-800">{ref.failureNotes || ref.atRiskReason}</p>
                   {ref.suggestedAction && (
                     <p className="text-teal-900 text-[11px] font-medium pt-1 border-t border-amber-200">
-                      Suggested Action: {ref.suggestedAction}
+                      {t.suggestedActionLabel} {ref.suggestedAction}
                     </p>
                   )}
                 </div>
@@ -615,12 +615,12 @@ export const AshaDashboard: React.FC<AshaDashboardProps> = ({
                     </p>
                   </div>
                   <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200">
-                    Visit Due
+                    {t.visitDue}
                   </span>
                 </div>
 
                 <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs space-y-1">
-                  <strong className="text-slate-800">Doctor's Consultation Instructions:</strong>
+                  <strong className="text-slate-800">{t.doctorInstructions}</strong>
                   <p className="text-slate-700">{ref.followUpNotes || ref.consultationNotes || 'Verify symptom resolution.'}</p>
                 </div>
 
@@ -630,14 +630,14 @@ export const AshaDashboard: React.FC<AshaDashboardProps> = ({
                     className="py-2 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 transition-colors cursor-pointer shadow-xs"
                   >
                     <Check className="w-4 h-4" />
-                    <span>Verify & Close Care Loop</span>
+                    <span>{t.closeCareLoop}</span>
                   </button>
                   <a
                     href={`tel:${ref.patient.phone}`}
                     className="py-2 px-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs flex items-center gap-1 transition-colors"
                   >
                     <Phone className="w-3.5 h-3.5" />
-                    <span>Call</span>
+                    <span>{t.call}</span>
                   </a>
                 </div>
               </div>
@@ -654,7 +654,7 @@ export const AshaDashboard: React.FC<AshaDashboardProps> = ({
           <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-2">
             <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
               <Building2 className="w-4 h-4 text-teal-700" />
-              <span>{t.navFacilities} Directory</span>
+              <span>{t.navFacilities} {t.directory}</span>
             </h3>
             <p className="text-xs text-slate-500">
               Nearby referral health facilities in Karjat Block / Raigad District
@@ -672,7 +672,7 @@ export const AshaDashboard: React.FC<AshaDashboardProps> = ({
                   <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
                     fac.currentLoad === 'Normal' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'
                   }`}>
-                    {fac.currentLoad} Load
+                    {fac.currentLoad === 'Normal' ? t.normalLoad : t.highLoad}
                   </span>
                 </div>
                 <div className="text-[11px] text-slate-600 space-y-1">
@@ -690,21 +690,21 @@ export const AshaDashboard: React.FC<AshaDashboardProps> = ({
       {/* ============================================================ */}
       {activeTab === 'account' && (
         <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-4">
-          <h3 className="text-base font-bold text-slate-900">ASHA Worker Account</h3>
+          <h3 className="text-base font-bold text-slate-900">{t.healthWorkerAccount}</h3>
 
           <div className="space-y-3 text-xs">
             <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1">
-              <span className="text-[10px] text-slate-400 font-bold uppercase">Name & Designation</span>
-              <p className="font-bold text-slate-900">{currentUser?.name} · ASHA Field Worker</p>
+              <span className="text-[10px] text-slate-400 font-bold uppercase">{t.nameDesignation}</span>
+              <p className="font-bold text-slate-900">{currentUser?.name} · {t.roleAsha}</p>
             </div>
 
             <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1">
-              <span className="text-[10px] text-slate-400 font-bold uppercase">Assigned Village & Facility</span>
+              <span className="text-[10px] text-slate-400 font-bold uppercase">{t.assignedVillageFacility}</span>
               <p className="font-bold text-slate-900">{currentUser?.village} · {currentUser?.facility}</p>
             </div>
 
             <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1">
-              <span className="text-[10px] text-slate-400 font-bold uppercase">Contact & Email</span>
+              <span className="text-[10px] text-slate-400 font-bold uppercase">{t.contactEmail}</span>
               <p className="font-bold text-slate-900">{currentUser?.phone} · {currentUser?.email}</p>
             </div>
           </div>

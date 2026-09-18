@@ -41,41 +41,41 @@ export const LoginScreen: React.FC = () => {
   }[] = [
     {
       id: 'doctor',
-      label: 'Doctor',
+      label: t.roleDoctor,
       icon: Stethoscope,
-      roleTitle: 'Medical Officer',
+      roleTitle: t.roleDoctorTitle,
       personaName: doctorUser.name,
-      description: 'PHC Receiving Facility & Clinical Consultation',
+      description: t.roleDoctorDesc,
       defaultEmail: doctorUser.email,
       placeholder: 'e.g. doctor@example.com or Dr. Sharma',
     },
     {
       id: 'asha',
-      label: 'ASHA worker',
+      label: t.roleAsha,
       icon: UserCheck,
-      roleTitle: 'Field Care Coordinator',
+      roleTitle: t.roleAshaTitle,
       personaName: ashaUser.name,
-      description: 'Community Health Triage & Field Referrals',
+      description: t.roleAshaDesc,
       defaultEmail: ashaUser.email,
       placeholder: 'e.g. asha@example.com or Sunita Devi',
     },
     {
       id: 'patient',
-      label: 'Patient',
+      label: t.rolePatient,
       icon: User,
-      roleTitle: 'Citizen / Beneficiary',
+      roleTitle: t.rolePatientTitle,
       personaName: patientUser.name,
-      description: 'Personal ABHA Health Records & QR Pass',
+      description: t.rolePatientDesc,
       defaultEmail: patientUser.email,
       placeholder: 'e.g. patient@example.com or ABHA ID',
     },
     {
       id: 'admin',
-      label: 'Admin',
+      label: t.roleAdmin,
       icon: Building2,
-      roleTitle: 'District Health Command',
+      roleTitle: t.roleAdminTitle,
       personaName: adminUser.name,
-      description: 'District Health Directorate & Surveillance',
+      description: t.roleAdminDesc,
       defaultEmail: adminUser.email,
       placeholder: 'e.g. admin@example.com or DHO Raigad',
     },
@@ -151,21 +151,21 @@ export const LoginScreen: React.FC = () => {
               <Globe className="w-3 h-3 text-teal-400" />
               <button 
                 onClick={() => setLanguage('en')}
-                className={`px-1.5 py-0.5 rounded ${language === 'en' ? 'text-teal-300 font-bold bg-slate-800' : 'hover:text-slate-200'}`}
+                className={`px-1.5 py-0.5 rounded ${language === 'en' ? 'text-teal-300 font-bold bg-slate-800' : 'hover:text-slate-200'} cursor-pointer`}
               >
                 EN
               </button>
               <span className="text-slate-600">·</span>
               <button 
                 onClick={() => setLanguage('mr')}
-                className={`px-1.5 py-0.5 rounded ${language === 'mr' ? 'text-teal-300 font-bold bg-slate-800' : 'hover:text-slate-200'}`}
+                className={`px-1.5 py-0.5 rounded ${language === 'mr' ? 'text-teal-300 font-bold bg-slate-800' : 'hover:text-slate-200'} cursor-pointer`}
               >
                 मराठी
               </button>
               <span className="text-slate-600">·</span>
               <button 
                 onClick={() => setLanguage('hi')}
-                className={`px-1.5 py-0.5 rounded ${language === 'hi' ? 'text-teal-300 font-bold bg-slate-800' : 'hover:text-slate-200'}`}
+                className={`px-1.5 py-0.5 rounded ${language === 'hi' ? 'text-teal-300 font-bold bg-slate-800' : 'hover:text-slate-200'} cursor-pointer`}
               >
                 हिंदी
               </button>
@@ -205,14 +205,14 @@ export const LoginScreen: React.FC = () => {
             </h3>
             <span className="text-[11px] text-teal-300/90 font-medium px-2.5 py-1 bg-teal-950/60 border border-teal-800/80 rounded-lg flex items-center gap-1.5">
               <ShieldCheck className="w-3.5 h-3.5 text-teal-400" />
-              <span>ABDM / State Portal</span>
+              <span>{t.statePortalTag}</span>
             </span>
           </div>
 
           {/* Role Tabs */}
           <div className="mb-5">
             <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2">
-              Login As
+              {t.loginAs}
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 bg-slate-950 p-1.5 rounded-2xl border border-slate-800">
               {roleTabs.map(tab => {
@@ -283,7 +283,7 @@ export const LoginScreen: React.FC = () => {
                 </label>
                 <button
                   type="button"
-                  onClick={() => setShowNotification('Demo credentials pre-filled. No password reset required.')}
+                  onClick={() => setShowNotification(t.prefilledCredentials)}
                   className="text-[11px] text-teal-400 hover:underline cursor-pointer"
                 >
                   {t.forgotPassword}
@@ -307,7 +307,7 @@ export const LoginScreen: React.FC = () => {
                 <button 
                   type="button"
                   onClick={() => setShowNotification(null)} 
-                  className="text-teal-400 font-bold ml-2 hover:text-teal-200"
+                  className="text-teal-400 font-bold ml-2 hover:text-teal-200 cursor-pointer"
                 >
                   ×
                 </button>
@@ -318,7 +318,7 @@ export const LoginScreen: React.FC = () => {
               type="submit"
               className="w-full py-3 bg-gradient-to-r from-teal-600 to-teal-500 hover:from-teal-500 hover:to-teal-400 text-white font-bold text-xs rounded-xl shadow-lg shadow-teal-950 transition-all flex items-center justify-center gap-2 mt-2 cursor-pointer active:scale-98"
             >
-              <span>{t.signIn} as {currentTab.label}</span>
+              <span>{t.signInAs} {currentTab.label}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </form>
@@ -326,7 +326,7 @@ export const LoginScreen: React.FC = () => {
           <div className="pt-5 mt-5 border-t border-slate-800/80 text-center">
             <button
               type="button"
-              onClick={() => setShowNotification('Demo account registration is simulated. Select a role tab above.')}
+              onClick={() => setShowNotification(t.simulatedRegistration)}
               className="text-xs text-slate-400 hover:text-teal-300 transition-colors cursor-pointer"
             >
               {t.createAccount}
@@ -338,7 +338,7 @@ export const LoginScreen: React.FC = () => {
       {/* Footer */}
       <div className="border-t border-slate-900 bg-black/60 px-4 py-3 text-center text-xs text-slate-500">
         <p>
-          SEHAT-LINK — Rural Healthcare Referral Continuity Prototype · Smart India Hackathon 2026
+          {t.footerText}
         </p>
       </div>
     </div>

@@ -177,7 +177,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({ activeTab = 'home' }) => {
             {isOffline ? (
               <>
                 <WifiOff className="w-3.5 h-3.5 text-amber-400" />
-                <span className="hidden md:inline">Offline</span>
+                <span className="hidden md:inline">{t.offline}</span>
                 {syncQueue.length > 0 && (
                   <span className="bg-amber-600 text-white text-[10px] px-1 rounded-full font-bold">
                     {syncQueue.length}
@@ -187,7 +187,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({ activeTab = 'home' }) => {
             ) : (
               <>
                 <Wifi className="w-3.5 h-3.5 text-emerald-400" />
-                <span className="hidden md:inline">Online</span>
+                <span className="hidden md:inline">{t.online}</span>
               </>
             )}
           </button>

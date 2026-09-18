@@ -70,10 +70,10 @@ export const DoctorDashboard: React.FC<DoctorDashboardProps> = ({
       <div className="bg-gradient-to-r from-slate-900 via-teal-950 to-slate-900 text-white p-5 sm:p-6 rounded-3xl border border-teal-800 shadow-md">
         <div className="flex items-center justify-between">
           <span className="text-[11px] font-bold text-teal-400 uppercase tracking-wider">
-            {currentUser?.facility || 'PHC Kashele'} · Receiving Facility
+            {currentUser?.facility || 'PHC Kashele'} · {t.receivingFacilityTag}
           </span>
           <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-teal-900 border border-teal-700 text-teal-200">
-            Medical Council Reg: #MC-2018-4921
+            {t.medCouncilReg}
           </span>
         </div>
         <h2 className="text-xl sm:text-2xl font-black mt-1">
@@ -102,7 +102,7 @@ export const DoctorDashboard: React.FC<DoctorDashboardProps> = ({
               <div className="text-2xl font-black text-slate-900">
                 {pendingAcceptance.length}
               </div>
-              <span className="text-[10px] text-amber-600 font-bold">Awaiting intake review</span>
+              <span className="text-[10px] text-amber-600 font-bold">{t.awaitingIntake}</span>
             </div>
 
             <div 
@@ -116,7 +116,7 @@ export const DoctorDashboard: React.FC<DoctorDashboardProps> = ({
               <div className="text-2xl font-black text-emerald-700">
                 {arrivedPatients.length}
               </div>
-              <span className="text-[10px] text-emerald-600 font-medium">Checked in at OP</span>
+              <span className="text-[10px] text-emerald-600 font-medium">{t.checkedInOP}</span>
             </div>
 
             <div 
@@ -124,13 +124,13 @@ export const DoctorDashboard: React.FC<DoctorDashboardProps> = ({
               className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs cursor-pointer hover:border-teal-500 transition-colors"
             >
               <div className="flex items-center justify-between text-slate-500 mb-1">
-                <span className="text-xs font-semibold">Scheduled Visits</span>
+                <span className="text-xs font-semibold">{t.scheduledVisits}</span>
                 <Calendar className="w-4 h-4 text-teal-600" />
               </div>
               <div className="text-2xl font-black text-slate-900">
                 {scheduledAppointments.length}
               </div>
-              <span className="text-[10px] text-slate-500">Booked today / tomorrow</span>
+              <span className="text-[10px] text-slate-500">{t.bookedTodayTomorrow}</span>
             </div>
 
             <div 
@@ -144,7 +144,7 @@ export const DoctorDashboard: React.FC<DoctorDashboardProps> = ({
               <div className="text-2xl font-black text-slate-900">
                 {followupsDue.length}
               </div>
-              <span className="text-[10px] text-slate-500">Post-consult reviews</span>
+              <span className="text-[10px] text-slate-500">{t.postConsultReviews}</span>
             </div>
           </div>
 
@@ -153,13 +153,13 @@ export const DoctorDashboard: React.FC<DoctorDashboardProps> = ({
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
                 <Stethoscope className="w-4 h-4 text-emerald-600" />
-                <span>Arrived Patients — Ready for Consultation</span>
+                <span>{t.readyForConsultation}</span>
               </h3>
-              <span className="text-xs text-slate-500">{arrivedPatients.length} waiting</span>
+              <span className="text-xs text-slate-500">{arrivedPatients.length} {t.casesLabel}</span>
             </div>
 
             {arrivedPatients.length === 0 ? (
-              <p className="text-xs text-slate-400 py-3 text-center">No patients currently in physical waiting area.</p>
+              <p className="text-xs text-slate-400 py-3 text-center">{t.noPatientsWaiting}</p>
             ) : (
               <div className="space-y-2.5">
                 {arrivedPatients.map(ref => (
@@ -174,11 +174,11 @@ export const DoctorDashboard: React.FC<DoctorDashboardProps> = ({
                         <span className="text-xs font-mono font-bold text-teal-700">#{ref.careThreadId}</span>
                       </div>
                       <p className="text-xs text-slate-700">
-                        Reason: {ref.referralReason} · Priority: <span className="font-bold text-teal-800">{ref.priority.toUpperCase()}</span>
+                        {t.reasonLabel} {ref.referralReason} · {t.priorityLabel} <span className="font-bold text-teal-800">{ref.priority === 'urgent' ? t.urgent : t.routine}</span>
                       </p>
                       {ref.vitals && (
                         <p className="text-[11px] text-slate-500">
-                          Vitals: Temp {ref.vitals.temperature || '98.6°F'} · BP {ref.vitals.bp || '120/80'} · SpO2 {ref.vitals.spo2 || '98%'}
+                          {t.vitalsLabel} Temp {ref.vitals.temperature || '98.6°F'} · BP {ref.vitals.bp || '120/80'} · SpO2 {ref.vitals.spo2 || '98%'}
                         </p>
                       )}
                     </div>
@@ -201,20 +201,20 @@ export const DoctorDashboard: React.FC<DoctorDashboardProps> = ({
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
                 <Activity className="w-4 h-4 text-teal-700" />
-                <span>Incoming Referrals Awaiting Acceptance</span>
+                <span>{t.incomingAwaitingAcceptance}</span>
               </h3>
               {onTabChange && (
                 <button
                   onClick={() => onTabChange('pending_referrals')}
                   className="text-xs font-bold text-teal-700 hover:text-teal-900 cursor-pointer"
                 >
-                  View Queue ({pendingAcceptance.length})
+                  {t.viewQueue} ({pendingAcceptance.length})
                 </button>
               )}
             </div>
 
             {pendingAcceptance.length === 0 ? (
-              <p className="text-xs text-slate-400 py-3 text-center">All referrals accepted.</p>
+              <p className="text-xs text-slate-400 py-3 text-center">{t.allReferralsAccepted}</p>
             ) : (
               <div className="space-y-2.5">
                 {pendingAcceptance.map(ref => (
@@ -229,7 +229,7 @@ export const DoctorDashboard: React.FC<DoctorDashboardProps> = ({
                         <span className="text-xs font-mono font-bold text-teal-700">#{ref.careThreadId}</span>
                       </div>
                       <p className="text-xs text-slate-700">
-                        From: <strong>{ref.sourceFacility}</strong> ({ref.createdBy})
+                        {t.fromOrigin} <strong>{ref.sourceFacility}</strong> ({ref.createdBy})
                       </p>
                       <p className="text-xs text-slate-500 italic">
                         {ref.priorityReason}
@@ -259,8 +259,8 @@ export const DoctorDashboard: React.FC<DoctorDashboardProps> = ({
       {activeTab === 'patients' && (
         <div className="space-y-4">
           <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-2">
-            <h3 className="text-base font-bold text-slate-900">PHC Patient Roster</h3>
-            <p className="text-xs text-slate-500">Patients referred to or actively managed at PHC Kashele</p>
+            <h3 className="text-base font-bold text-slate-900">{t.phcPatientRoster}</h3>
+            <p className="text-xs text-slate-500">{t.phcPatientRosterDesc}</p>
           </div>
 
           <div className="space-y-3">
@@ -270,17 +270,17 @@ export const DoctorDashboard: React.FC<DoctorDashboardProps> = ({
                   <div>
                     <h4 className="text-sm font-bold text-slate-900">{ref.patient.name}</h4>
                     <p className="text-xs text-slate-500">{ref.patient.age}y · {ref.patient.gender} · {ref.patient.village}</p>
-                    <p className="text-xs text-teal-800 font-medium mt-0.5">Condition: {ref.referralReason}</p>
+                    <p className="text-xs text-teal-800 font-medium mt-0.5">{t.conditionLabel} {ref.referralReason}</p>
                   </div>
                   <StatusBadge status={ref.status} isAtRisk={ref.isAtRisk} />
                 </div>
                 <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
-                  <span className="text-slate-500">Care Thread #{ref.careThreadId}</span>
+                  <span className="text-slate-500">{t.careThreadPrefix}{ref.careThreadId}</span>
                   <button
                     onClick={() => onDoctorAction(ref)}
                     className="px-3 py-1 bg-teal-50 hover:bg-teal-100 text-teal-800 font-bold rounded-lg border border-teal-200/80 text-[11px] cursor-pointer"
                   >
-                    Clinical Review
+                    {t.clinicalReview}
                   </button>
                 </div>
               </div>
@@ -296,7 +296,7 @@ export const DoctorDashboard: React.FC<DoctorDashboardProps> = ({
         <div className="space-y-4">
           <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-2">
             <h3 className="text-base font-bold text-slate-900">{t.navPendingReferrals} ({pendingAcceptance.length})</h3>
-            <p className="text-xs text-slate-500">Incoming referrals transmitted from Sub-Centres awaiting bed & slot acceptance</p>
+            <p className="text-xs text-slate-500">{t.pendingReferralsDesc}</p>
           </div>
 
           <div className="space-y-3">
@@ -305,15 +305,15 @@ export const DoctorDashboard: React.FC<DoctorDashboardProps> = ({
                 <div className="flex items-start justify-between">
                   <div>
                     <h4 className="text-base font-bold text-slate-900">{ref.patient.name}</h4>
-                    <p className="text-xs text-slate-500">Initiated by {ref.createdBy} · {ref.sourceFacility}</p>
+                    <p className="text-xs text-slate-500">{t.initiatedBy} {ref.createdBy} · {ref.sourceFacility}</p>
                   </div>
                   <StatusBadge status={ref.status} />
                 </div>
 
                 <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs space-y-1">
-                  <strong className="text-slate-800">Referral Indication:</strong>
+                  <strong className="text-slate-800">{t.referralIndication}</strong>
                   <p className="text-slate-700">{ref.referralReason}</p>
-                  <p className="text-slate-500 italic">Vitals: {ref.vitals?.temperature || 'Normal'} · SpO2: {ref.vitals?.spo2 || '98%'}</p>
+                  <p className="text-slate-500 italic">{t.vitalsLabel} {ref.vitals?.temperature || 'Normal'} · SpO2: {ref.vitals?.spo2 || '98%'}</p>
                 </div>
 
                 <div className="flex gap-2">
@@ -337,8 +337,8 @@ export const DoctorDashboard: React.FC<DoctorDashboardProps> = ({
       {activeTab === 'appointments' && (
         <div className="space-y-4">
           <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-2">
-            <h3 className="text-base font-bold text-slate-900">Today's Appointments & Arrivals</h3>
-            <p className="text-xs text-slate-500">Mark patients arrived at the facility or initiate consultation</p>
+            <h3 className="text-base font-bold text-slate-900">{t.todayAppointmentsArrivals}</h3>
+            <p className="text-xs text-slate-500">{t.todayAppointmentsDesc}</p>
           </div>
 
           <div className="space-y-3">
@@ -348,7 +348,7 @@ export const DoctorDashboard: React.FC<DoctorDashboardProps> = ({
                   <div>
                     <h4 className="text-base font-bold text-slate-900">{ref.patient.name}</h4>
                     <p className="text-xs text-slate-500">
-                      Scheduled: <strong>{ref.scheduledTime || 'Today'}</strong>
+                      {t.scheduledTimeLabel} <strong>{ref.scheduledTime || t.today}</strong>
                     </p>
                   </div>
                   <StatusBadge status={ref.status} />
@@ -384,8 +384,8 @@ export const DoctorDashboard: React.FC<DoctorDashboardProps> = ({
       {activeTab === 'consultations' && (
         <div className="space-y-4">
           <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-2">
-            <h3 className="text-base font-bold text-slate-900">{t.navConsultations} Queue</h3>
-            <p className="text-xs text-slate-500">Active consultations and recorded clinical treatment outcomes</p>
+            <h3 className="text-base font-bold text-slate-900">{t.navConsultations} {t.queueLabel}</h3>
+            <p className="text-xs text-slate-500">{t.consultationsQueueDesc}</p>
           </div>
 
           <div className="space-y-3">
@@ -394,14 +394,14 @@ export const DoctorDashboard: React.FC<DoctorDashboardProps> = ({
                 <div className="flex items-start justify-between">
                   <div>
                     <h4 className="text-base font-bold text-slate-900">{ref.patient.name}</h4>
-                    <p className="text-xs text-slate-500">Thread #{ref.careThreadId}</p>
+                    <p className="text-xs text-slate-500">{t.careThreadPrefix}{ref.careThreadId}</p>
                   </div>
                   <StatusBadge status={ref.status} />
                 </div>
 
                 {ref.consultationNotes && (
                   <div className="p-3 bg-teal-50/60 border border-teal-200 rounded-xl text-xs space-y-1">
-                    <strong className="text-teal-900">Clinical Outcome Note:</strong>
+                    <strong className="text-teal-900">{t.clinicalOutcomeNote}</strong>
                     <p className="text-slate-800">{ref.consultationNotes}</p>
                   </div>
                 )}
@@ -412,7 +412,7 @@ export const DoctorDashboard: React.FC<DoctorDashboardProps> = ({
                     className="py-2 px-4 bg-teal-700 hover:bg-teal-800 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 cursor-pointer"
                   >
                     <Stethoscope className="w-4 h-4" />
-                    <span>Open Clinical Action Modal</span>
+                    <span>{t.openClinicalActionDrawer}</span>
                   </button>
                 </div>
               </div>
@@ -428,7 +428,7 @@ export const DoctorDashboard: React.FC<DoctorDashboardProps> = ({
         <div className="space-y-4">
           <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-2">
             <h3 className="text-base font-bold text-slate-900">{t.navFollowups} ({followupsDue.length})</h3>
-            <p className="text-xs text-slate-500">Post-discharge check-ins assigned to village frontline workers</p>
+            <p className="text-xs text-slate-500">{t.doctorFollowupsDesc}</p>
           </div>
 
           <div className="space-y-3">
@@ -436,7 +436,7 @@ export const DoctorDashboard: React.FC<DoctorDashboardProps> = ({
               <div key={ref.id} className="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-2">
                 <div className="flex items-start justify-between">
                   <h4 className="text-sm font-bold text-slate-900">{ref.patient.name}</h4>
-                  <span className="text-xs text-amber-700 font-bold">Due: {ref.followUpDate || 'Pending'}</span>
+                  <span className="text-xs text-amber-700 font-bold">{t.dueLabel} {ref.followUpDate || t.pendingLabel}</span>
                 </div>
                 <p className="text-xs text-slate-600">{ref.followUpNotes || ref.consultationNotes}</p>
               </div>
@@ -450,21 +450,21 @@ export const DoctorDashboard: React.FC<DoctorDashboardProps> = ({
       {/* ============================================================ */}
       {activeTab === 'account' && (
         <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-4">
-          <h3 className="text-base font-bold text-slate-900">Medical Officer Account</h3>
+          <h3 className="text-base font-bold text-slate-900">{t.doctorAccount}</h3>
 
           <div className="space-y-3 text-xs">
             <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1">
-              <span className="text-[10px] text-slate-400 font-bold uppercase">Name & Designation</span>
-              <p className="font-bold text-slate-900">{currentUser?.name} · Medical Officer (MBBS)</p>
+              <span className="text-[10px] text-slate-400 font-bold uppercase">{t.nameDesignation}</span>
+              <p className="font-bold text-slate-900">{currentUser?.name} · {t.medicalOfficerMBBS}</p>
             </div>
 
             <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1">
-              <span className="text-[10px] text-slate-400 font-bold uppercase">Assigned Facility</span>
+              <span className="text-[10px] text-slate-400 font-bold uppercase">{t.assignedFacility}</span>
               <p className="font-bold text-slate-900">{currentUser?.facility}, Karjat Block</p>
             </div>
 
             <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1">
-              <span className="text-[10px] text-slate-400 font-bold uppercase">Contact & Email</span>
+              <span className="text-[10px] text-slate-400 font-bold uppercase">{t.contactEmail}</span>
               <p className="font-bold text-slate-900">{currentUser?.phone} · {currentUser?.email}</p>
             </div>
           </div>

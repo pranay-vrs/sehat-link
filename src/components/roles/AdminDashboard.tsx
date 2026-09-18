@@ -116,7 +116,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-xs space-y-1">
               <span className="text-xs font-semibold text-slate-500 block">{t.patientsServed}</span>
               <div className="text-2xl sm:text-3xl font-black text-slate-900">1,248</div>
-              <span className="text-[10px] text-teal-700 font-medium">Assigned rural citizens</span>
+              <span className="text-[10px] text-teal-700 font-medium">{t.assignedRuralCitizens}</span>
             </div>
 
             <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-xs space-y-1">
@@ -128,7 +128,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-xs space-y-1">
               <span className="text-xs font-semibold text-slate-500 block">{t.completedReferrals}</span>
               <div className="text-2xl sm:text-3xl font-black text-emerald-700">{completedCount}</div>
-              <span className="text-[10px] text-emerald-600 font-medium">Care loop closed successfully</span>
+              <span className="text-[10px] text-emerald-600 font-medium">{t.careLoopClosed}</span>
             </div>
 
             <div className="bg-rose-50/70 p-4 sm:p-5 rounded-2xl border border-rose-300 shadow-xs space-y-1">
@@ -136,7 +136,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               <div className="text-2xl sm:text-3xl font-black text-rose-900">
                 {atRiskCount} <span className="text-sm font-semibold text-rose-700">({atRiskPercent}%)</span>
               </div>
-              <span className="text-[10px] text-rose-700 font-bold">Stalled operational cases</span>
+              <span className="text-[10px] text-rose-700 font-bold">{t.stalledOperationalCases}</span>
             </div>
           </div>
 
@@ -148,28 +148,28 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   <Activity className="w-4 h-4 text-teal-700" />
                   <span>{t.referralPipeline}</span>
                 </h3>
-                <p className="text-xs text-slate-500">Tracking referral progression through each care milestone</p>
+                <p className="text-xs text-slate-500">{t.pipelineTrackingDesc}</p>
               </div>
               <span className="text-xs font-bold text-teal-800 bg-teal-50 px-2.5 py-1 rounded-full border border-teal-200">
-                Total Pipeline: {createdCount} Referrals
+                {t.totalPipeline} {createdCount} {t.navReferrals}
               </span>
             </div>
 
             {/* Funnel Pipeline Steps */}
             <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2 text-center text-xs">
               {[
-                { stage: 'Created', count: createdCount, pct: 100, color: 'border-teal-500 text-teal-900 bg-teal-50/70' },
-                { stage: 'Accepted', count: acceptedCount, pct: Math.round((acceptedCount / (createdCount || 1)) * 100), color: 'border-teal-400 text-teal-900 bg-teal-50/50' },
-                { stage: 'Scheduled', count: scheduledCount, pct: Math.round((scheduledCount / (createdCount || 1)) * 100), color: 'border-teal-400 text-teal-900 bg-teal-50/50' },
-                { stage: 'Arrived', count: arrivedCount, pct: Math.round((arrivedCount / (createdCount || 1)) * 100), color: 'border-emerald-400 text-emerald-900 bg-emerald-50/50' },
-                { stage: 'Consulted', count: consultedCount, pct: Math.round((consultedCount / (createdCount || 1)) * 100), color: 'border-emerald-500 text-emerald-900 bg-emerald-50/70' },
-                { stage: 'Follow-up', count: followupCount, pct: Math.round((followupCount / (createdCount || 1)) * 100), color: 'border-amber-400 text-amber-900 bg-amber-50/60' },
-                { stage: 'Completed', count: closedCount, pct: Math.round((closedCount / (createdCount || 1)) * 100), color: 'border-emerald-600 text-emerald-950 bg-emerald-100/70' }
+                { stage: t.statusCreated, count: createdCount, pct: 100, color: 'border-teal-500 text-teal-900 bg-teal-50/70' },
+                { stage: t.statusAccepted, count: acceptedCount, pct: Math.round((acceptedCount / (createdCount || 1)) * 100), color: 'border-teal-400 text-teal-900 bg-teal-50/50' },
+                { stage: t.statusScheduled, count: scheduledCount, pct: Math.round((scheduledCount / (createdCount || 1)) * 100), color: 'border-teal-400 text-teal-900 bg-teal-50/50' },
+                { stage: t.statusArrived, count: arrivedCount, pct: Math.round((arrivedCount / (createdCount || 1)) * 100), color: 'border-emerald-400 text-emerald-900 bg-emerald-50/50' },
+                { stage: t.statusConsulted, count: consultedCount, pct: Math.round((consultedCount / (createdCount || 1)) * 100), color: 'border-emerald-500 text-emerald-900 bg-emerald-50/70' },
+                { stage: t.statusFollowup, count: followupCount, pct: Math.round((followupCount / (createdCount || 1)) * 100), color: 'border-amber-400 text-amber-900 bg-amber-50/60' },
+                { stage: t.statusCompleted, count: closedCount, pct: Math.round((closedCount / (createdCount || 1)) * 100), color: 'border-emerald-600 text-emerald-950 bg-emerald-100/70' }
               ].map((step, idx) => (
                 <div key={idx} className={`p-3 rounded-2xl border-2 ${step.color} flex flex-col justify-between space-y-1`}>
                   <span className="text-[11px] font-bold text-slate-700">{step.stage}</span>
                   <div className="text-lg sm:text-xl font-black">{step.count}</div>
-                  <span className="text-[10px] font-semibold text-slate-500">{step.pct}% pass-through</span>
+                  <span className="text-[10px] font-semibold text-slate-500">{step.pct}% {t.passThrough}</span>
                 </div>
               ))}
             </div>
@@ -217,12 +217,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         <span>{b.label}</span>
                         {isSelected && (
                           <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-teal-700 text-white">
-                            Selected
+                            {t.selectedBadge}
                           </span>
                         )}
                       </div>
                       <span className="font-bold text-slate-900">
-                        {b.count} cases ({b.pct}%)
+                        {b.count} {t.casesLabel} ({b.pct}%)
                       </span>
                     </div>
 
@@ -242,10 +242,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               <div className="flex items-center justify-between">
                 <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
                   {selectedBottleneckReason 
-                    ? `Drill-Down: Stalled Cases (${selectedBottleneckReason.toUpperCase()})` 
-                    : `${t.stalledReferrals} Across District`}
+                    ? `${t.drilldownStalledCases} (${selectedBottleneckReason.toUpperCase()})` 
+                    : `${t.stalledReferrals} ${t.acrossDistrict}`}
                 </h4>
-                <span className="text-xs text-slate-500">{activeDrilldownReferrals.length} Cases</span>
+                <span className="text-xs text-slate-500">{activeDrilldownReferrals.length} {t.casesLabel}</span>
               </div>
 
               <div className="space-y-2.5">
@@ -263,10 +263,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         </span>
                       </div>
                       <p className="text-slate-700">
-                        Facility: <strong>{ref.destinationFacility}</strong> · Origin: {ref.sourceFacility} ({ref.createdBy})
+                        {t.destination}: <strong>{ref.destinationFacility}</strong> · {t.origin}: {ref.sourceFacility} ({ref.createdBy})
                       </p>
                       <p className="text-slate-500 text-[11px] italic">
-                        {ref.failureNotes || ref.atRiskReason || 'Transit delay recorded.'}
+                        {ref.failureNotes || ref.atRiskReason || t.transitDelayed}
                       </p>
                     </div>
 
@@ -276,7 +276,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         onClick={() => selectReferral(ref.id)}
                         className="py-1.5 px-3 bg-teal-700 hover:bg-teal-800 text-white rounded-xl text-xs font-bold transition-colors cursor-pointer"
                       >
-                        Inspect Thread
+                        {t.inspectThread}
                       </button>
                     </div>
                   </div>
@@ -293,8 +293,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       {activeTab === 'referrals' && (
         <div className="space-y-4">
           <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-2">
-            <h3 className="text-base font-bold text-slate-900">District Referral Surveillance</h3>
-            <p className="text-xs text-slate-500">Live monitoring of all referrals across PHCs, CHCs, and Sub-District Hospitals</p>
+            <h3 className="text-base font-bold text-slate-900">{t.districtSurveillance}</h3>
+            <p className="text-xs text-slate-500">{t.districtSurveillanceDesc}</p>
           </div>
 
           <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
@@ -302,12 +302,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               <table className="w-full text-left text-xs">
                 <thead className="bg-slate-50 text-slate-700 uppercase text-[10px] font-bold border-b border-slate-200">
                   <tr>
-                    <th className="p-3.5">Care Thread / ID</th>
-                    <th className="p-3.5">Patient</th>
-                    <th className="p-3.5">Origin ➔ Destination</th>
-                    <th className="p-3.5">Priority</th>
-                    <th className="p-3.5">Status</th>
-                    <th className="p-3.5">Action</th>
+                    <th className="p-3.5">{t.thCareThread}</th>
+                    <th className="p-3.5">{t.thPatient}</th>
+                    <th className="p-3.5">{t.thRoute}</th>
+                    <th className="p-3.5">{t.thPriority}</th>
+                    <th className="p-3.5">{t.thStatus}</th>
+                    <th className="p-3.5">{t.thAction}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200">
@@ -329,7 +329,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
                           ref.priority === 'urgent' ? 'bg-rose-100 text-rose-800' : 'bg-slate-100 text-slate-700'
                         }`}>
-                          {ref.priority.toUpperCase()}
+                          {ref.priority === 'urgent' ? t.urgent : t.routine}
                         </span>
                       </td>
                       <td className="p-3.5">
@@ -340,7 +340,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                           onClick={() => selectReferral(ref.id)}
                           className="px-2.5 py-1 bg-teal-50 hover:bg-teal-100 text-teal-800 font-bold rounded-lg border border-teal-200 text-[11px] cursor-pointer"
                         >
-                          Details
+                          {t.detailsBtn}
                         </button>
                       </td>
                     </tr>
@@ -360,10 +360,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           <div className="bg-rose-50 border border-rose-300 p-5 rounded-3xl space-y-2">
             <h3 className="text-base font-bold text-rose-950 flex items-center gap-2">
               <AlertTriangle className="w-5 h-5 text-rose-700" />
-              <span>District Bottlenecks & At-Risk Referrals ({atRiskCount})</span>
+              <span>{t.districtBottlenecksTitle} ({atRiskCount})</span>
             </h3>
             <p className="text-xs text-rose-900">
-              Patients currently delayed between facilities. Immediate intervention needed from block coordinators.
+              {t.districtBottlenecksDesc}
             </p>
           </div>
 
@@ -373,12 +373,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 <div className="flex items-start justify-between">
                   <div>
                     <h4 className="text-base font-bold text-slate-900">{ref.patient.name} · #{ref.careThreadId}</h4>
-                    <p className="text-xs text-slate-500">Route: {ref.sourceFacility} ➔ {ref.destinationFacility}</p>
+                    <p className="text-xs text-slate-500">{t.routeLabel} {ref.sourceFacility} ➔ {ref.destinationFacility}</p>
                   </div>
                   <StatusBadge status={ref.status} isAtRisk={true} />
                 </div>
                 <div className="p-3.5 bg-rose-50/60 border border-rose-200 rounded-xl text-xs space-y-1">
-                  <strong className="text-rose-900">Failure Cause: {ref.failureReason?.toUpperCase() || 'TRANSIT'}</strong>
+                  <strong className="text-rose-900">
+                    {t.failureCauseLabel} {ref.failureReason ? (t[('reason' + ref.failureReason.charAt(0).toUpperCase() + ref.failureReason.slice(1)) as keyof typeof t] || ref.failureReason.toUpperCase()) : t.transitDelayed}
+                  </strong>
                   <p className="text-slate-800">{ref.failureNotes || ref.atRiskReason}</p>
                 </div>
               </div>
@@ -393,8 +395,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       {activeTab === 'facilities' && (
         <div className="space-y-4">
           <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-2">
-            <h3 className="text-base font-bold text-slate-900">District Healthcare Facility Network</h3>
-            <p className="text-xs text-slate-500">Facility tiering, inpatient bed load, and queue status across Raigad</p>
+            <h3 className="text-base font-bold text-slate-900">{t.facilityNetworkTitle}</h3>
+            <p className="text-xs text-slate-500">{t.facilityNetworkDesc}</p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -408,11 +410,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
                     fac.currentLoad === 'Normal' ? 'bg-emerald-100 text-emerald-800' : (fac.currentLoad === 'High' ? 'bg-amber-100 text-amber-800' : 'bg-rose-100 text-rose-800')
                   }`}>
-                    {fac.currentLoad} Load
+                    {fac.currentLoad === 'Normal' ? t.normalLoad : (fac.currentLoad === 'High' ? t.highLoad : t.criticalLoad)} {t.loadLabel}
                   </span>
                 </div>
-                <p className="text-xs text-slate-600">Distance: {fac.distanceKm} km · Wait: ~{fac.estimatedWaitMinutes} mins</p>
-                <p className="text-[11px] text-slate-400">Available: {fac.availableServices.join(', ')}</p>
+                <p className="text-xs text-slate-600">{t.distanceLabel} {fac.distanceKm} km · {t.waitLabel}{fac.estimatedWaitMinutes} {t.minsLabel}</p>
+                <p className="text-[11px] text-slate-400">{t.availableServicesLabel} {fac.availableServices.join(', ')}</p>
               </div>
             ))}
           </div>
@@ -425,8 +427,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       {activeTab === 'workers' && (
         <div className="space-y-4">
           <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-2">
-            <h3 className="text-base font-bold text-slate-900">{t.navWorkers} Roster</h3>
-            <p className="text-xs text-slate-500">Active frontline ASHAs, ANMs, and Medical Officers across Karjat Block</p>
+            <h3 className="text-base font-bold text-slate-900">{t.navWorkers} {t.rosterLabel}</h3>
+            <p className="text-xs text-slate-500">{t.workersRosterDesc}</p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
@@ -436,16 +438,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 <span className="px-2 py-0.5 rounded-full bg-teal-100 text-teal-800 font-bold text-[10px]">ASHA</span>
               </div>
               <p className="text-slate-600">Sub-Centre Kashele · Kashele Village</p>
-              <p className="text-slate-500">Active Care Threads: 6 · Closure Rate: 94%</p>
+              <p className="text-slate-500">{t.activeCareThreadsLabel} 6 · {t.closureRateLabel} 94%</p>
             </div>
 
             <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-2">
               <div className="flex items-center justify-between">
                 <strong className="text-sm text-slate-900">Dr. Sharma</strong>
-                <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">Medical Officer</span>
+                <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">{t.medicalOfficerMBBS}</span>
               </div>
-              <p className="text-slate-600">PHC Kashele · Receiving Facility</p>
-              <p className="text-slate-500">Incoming Queue: 4 · Consultations Done: 18</p>
+              <p className="text-slate-600">PHC Kashele · {t.receivingFacilityTag}</p>
+              <p className="text-slate-500">{t.incomingQueueLabel} 4 · {t.consultationsDoneLabel} 18</p>
             </div>
           </div>
         </div>
@@ -457,17 +459,17 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       {activeTab === 'reports' && (
         <div className="space-y-4">
           <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-2">
-            <h3 className="text-base font-bold text-slate-900">District Referral Continuity Reports</h3>
-            <p className="text-xs text-slate-500">Automated performance and drop-off summaries (Synthetic Data for SIH 2026)</p>
+            <h3 className="text-base font-bold text-slate-900">{t.reportsTitle}</h3>
+            <p className="text-xs text-slate-500">{t.reportsSubtitle}</p>
           </div>
 
           <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-xs space-y-4 text-xs">
             <div className="p-4 bg-teal-50/60 border border-teal-200 rounded-2xl space-y-2">
-              <strong className="text-teal-900 text-sm block">Key Performance Indicators:</strong>
+              <strong className="text-teal-900 text-sm block">{t.kpiTitle}</strong>
               <ul className="space-y-1.5 text-slate-700">
-                <li>• <strong>Median Referral Closure Time:</strong> 3.2 Days (Target: &lt; 4.0 Days)</li>
-                <li>• <strong>Referral Completion Rate:</strong> 86.2% across Karjat block</li>
-                <li>• <strong>Primary Drop-off Cause:</strong> Rural transit barriers (38% of delayed cases)</li>
+                <li>• <strong>{t.medianTimeToCare}:</strong> 3.2 Days (Target: &lt; 4.0 Days)</li>
+                <li>• <strong>{t.completionRate}:</strong> 86.2% across Karjat block</li>
+                <li>• <strong>Primary Drop-off Cause:</strong> {t.reasonTransport} (38%)</li>
               </ul>
             </div>
 
@@ -476,7 +478,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               className="py-2.5 px-4 bg-teal-700 hover:bg-teal-800 text-white rounded-xl font-bold flex items-center gap-2 cursor-pointer"
             >
               <Download className="w-4 h-4" />
-              <span>Download Synthetic District Report (PDF/CSV)</span>
+              <span>{t.downloadReportBtn}</span>
             </button>
           </div>
         </div>
@@ -490,15 +492,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           <div className="bg-slate-900 text-white p-5 rounded-3xl border border-slate-800 shadow-md space-y-2">
             <div className="flex items-center gap-2 text-teal-400">
               <Network className="w-5 h-5" />
-              <h3 className="text-base font-bold">HL7 FHIR R4 / ABDM Prototype Architecture</h3>
+              <h3 className="text-base font-bold">{t.interopTitle}</h3>
             </div>
             <p className="text-xs text-slate-300">
-              Simulated interoperability layer designed for future ABDM Milestone 1/2/3 and eSanjeevani integration.
+              {t.interopSubtitle}
             </p>
           </div>
 
           <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-3 text-xs">
-            <h4 className="font-bold text-slate-900">Standard FHIR R4 Resources Generated:</h4>
+            <h4 className="font-bold text-slate-900">{t.standardFhirResources}</h4>
             <div className="space-y-2 font-mono text-[11px]">
               {fhirResources.map((res, i) => (
                 <div key={i} className="p-3 bg-slate-900 text-teal-300 rounded-xl overflow-x-auto">
@@ -518,21 +520,21 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       {/* ============================================================ */}
       {activeTab === 'account' && (
         <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-4">
-          <h3 className="text-base font-bold text-slate-900">District Administrator Account</h3>
+          <h3 className="text-base font-bold text-slate-900">{t.adminAccountTitle}</h3>
 
           <div className="space-y-3 text-xs">
             <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1">
-              <span className="text-[10px] text-slate-400 font-bold uppercase">Name & Designation</span>
-              <p className="font-bold text-slate-900">{currentUser?.name} · District Health Command</p>
+              <span className="text-[10px] text-slate-400 font-bold uppercase">{t.nameDesignation}</span>
+              <p className="font-bold text-slate-900">{currentUser?.name} · {t.districtHealthCommand}</p>
             </div>
 
             <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1">
-              <span className="text-[10px] text-slate-400 font-bold uppercase">Department & Jurisdiction</span>
-              <p className="font-bold text-slate-900">Public Health Department · Raigad District</p>
+              <span className="text-[10px] text-slate-400 font-bold uppercase">{t.jurisdiction}</span>
+              <p className="font-bold text-slate-900">{t.publicHealthDept}</p>
             </div>
 
             <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1">
-              <span className="text-[10px] text-slate-400 font-bold uppercase">Contact & Email</span>
+              <span className="text-[10px] text-slate-400 font-bold uppercase">{t.contactEmail}</span>
               <p className="font-bold text-slate-900">{currentUser?.phone} · {currentUser?.email}</p>
             </div>
           </div>

@@ -78,7 +78,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({ isOpen, onCl
             <div className="space-y-1.5">
               <label className="font-bold text-slate-700 flex items-center gap-1.5 text-xs">
                 <Key className="w-4 h-4 text-teal-700" />
-                <span>Authorized Role Permissions:</span>
+                <span>{t.authorizedPermissions}</span>
               </label>
               <div className="flex flex-wrap gap-1.5">
                 {currentUser.permissions.map((p, idx) => (
@@ -94,7 +94,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({ isOpen, onCl
           <div className="space-y-1.5">
             <label className="font-bold text-slate-700 flex items-center gap-1.5 text-xs">
               <Globe className="w-4 h-4 text-teal-700" />
-              <span>Preferred Language (भाषा प्राधान्य):</span>
+              <span>{t.preferredLanguage}</span>
             </label>
             <div className="grid grid-cols-3 gap-2">
               {[
@@ -120,7 +120,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({ isOpen, onCl
           {/* Privacy Note */}
           <div className="p-3 bg-teal-50/60 border border-teal-200 rounded-xl text-[11px] text-teal-900 leading-relaxed">
             <p>
-              🔒 <strong>Fixed Account Session</strong>: To test a different healthcare worker or administrator persona for the Smart India Hackathon demo, please sign out and pick the corresponding demo account on the login page.
+              🔒 {t.fixedSessionNote}
             </p>
           </div>
 
