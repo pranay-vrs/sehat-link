@@ -50,6 +50,7 @@ export const NewCaseModal: React.FC<NewCaseModalProps> = ({ isOpen, onClose, pre
 
   // Step 3: What is the Problem?
   const [selectedProblem, setSelectedProblem] = useState<string>('Fever');
+  const [otherProblemDescription, setOtherProblemDescription] = useState<string>('');
   const [symptoms, setSymptoms] = useState<string[]>(['Fever > 3 days']);
   const [symptomDuration, setSymptomDuration] = useState('3 days');
 
@@ -123,6 +124,10 @@ export const NewCaseModal: React.FC<NewCaseModalProps> = ({ isOpen, onClose, pre
     const chosenFacility = facilities.find(f => f.id === selectedFacilityId) || facilities[1];
     const chosenScheme = schemes.find(s => s.id === selectedSchemeId);
 
+    const problemDisplay = selectedProblem === 'Other' && otherProblemDescription.trim()
+      ? `Other (${otherProblemDescription.trim()})`
+      : selectedProblem;
+
     const ref = createReferral({
       patientId: selectedPatient.id,
       patient: selectedPatient,
@@ -130,7 +135,7 @@ export const NewCaseModal: React.FC<NewCaseModalProps> = ({ isOpen, onClose, pre
       destinationFacility: chosenFacility.name,
       priority: priority,
       priorityReason: priorityReason,
-      referralReason: `${selectedProblem}: Persistent clinical signs. Duration: ${symptomDuration}.`,
+      referralReason: `${problemDisplay}: Persistent clinical signs. Duration: ${symptomDuration}.`,
       schemeId: selectedSchemeId,
       schemeName: chosenScheme?.name,
       vitals: {
@@ -139,7 +144,7 @@ export const NewCaseModal: React.FC<NewCaseModalProps> = ({ isOpen, onClose, pre
         spo2: spo2,
         pulse: pulse
       },
-      symptoms: [selectedProblem, ...symptoms],
+      symptoms: [problemDisplay, ...symptoms],
       symptomDuration: symptomDuration
     });
 
@@ -151,6 +156,8 @@ export const NewCaseModal: React.FC<NewCaseModalProps> = ({ isOpen, onClose, pre
     setStep(1);
     setSelectedPatient(null);
     setIsRegisteringNew(false);
+    setSelectedProblem('Fever');
+    setOtherProblemDescription('');
     setCreatedReferralResult(null);
     onClose();
   };
@@ -368,6 +375,27 @@ export const NewCaseModal: React.FC<NewCaseModalProps> = ({ isOpen, onClose, pre
                   );
                 })}
               </div>
+
+              {selectedProblem === 'Other' && (
+                <div className="space-y-1.5 p-3.5 bg-teal-50/70 border border-teal-200 rounded-2xl animate-in fade-in slide-in-from-top-2 duration-200">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-semibold text-slate-800 flex items-center gap-1.5">
+                      <Stethoscope className="w-3.5 h-3.5 text-teal-700" />
+                      <span>Describe Primary Health Issue / Complaint</span>
+                    </label>
+                    <span className="text-[10px] font-medium text-teal-700 bg-teal-100/80 px-2 py-0.5 rounded-md">
+                      ASHA Field Notes
+                    </span>
+                  </div>
+                  <textarea
+                    rows={2}
+                    value={otherProblemDescription}
+                    onChange={(e) => setOtherProblemDescription(e.target.value)}
+                    placeholder="Type to describe the health complaint or symptoms (e.g. Severe abdominal pain with vomiting, swelling in legs, persistent rash, etc.)..."
+                    className="w-full p-2.5 bg-white border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-teal-200 focus:border-teal-500 text-slate-900 placeholder:text-slate-400 resize-none transition-all outline-hidden"
+                  />
+                </div>
+              )}
 
               <div>
                 <label className="text-xs font-semibold text-slate-700 block mb-1">
