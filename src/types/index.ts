@@ -2,7 +2,7 @@ export type Role = 'asha' | 'doctor' | 'admin' | 'patient';
 export type UserType = 'patient' | 'health_worker' | 'admin';
 export type HealthWorkerSubRole = 'asha' | 'anm' | 'medical_officer';
 export type Language = 'en' | 'mr' | 'hi';
-export type Priority = 'urgent' | 'routine';
+export type Priority = 'emergency' | 'urgent' | 'routine';
 export type ReferralStatus = 'created' | 'accepted' | 'scheduled' | 'arrived' | 'consulted' | 'followup' | 'completed';
 
 export type FailureReason = 

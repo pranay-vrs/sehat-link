@@ -69,7 +69,7 @@ export const AshaDashboard: React.FC<AshaDashboardProps> = ({
   const followUpReferrals = ashaReferrals.filter(r => r.status === 'followup' && !r.isFollowUpCompleted);
 
   // Priority case highlight (Savita Patil or any at-risk case)
-  const priorityAtRiskCase = atRiskReferrals[0] || ashaReferrals.find(r => r.priority === 'urgent');
+  const priorityAtRiskCase = atRiskReferrals[0] || ashaReferrals.find(r => r.priority === 'emergency' || r.priority === 'urgent');
 
   // Filter state for referrals tab
   const [referralStatusFilter, setReferralStatusFilter] = useState<string>('all');
@@ -475,7 +475,7 @@ export const AshaDashboard: React.FC<AshaDashboardProps> = ({
                 <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs space-y-1">
                   <div className="flex items-center justify-between text-slate-500 text-[11px]">
                     <span>{t.stageCreated}: {ref.createdAt}</span>
-                    <span className="font-bold text-teal-800">{t.priority}: {ref.priority === 'urgent' ? t.urgent : t.routine}</span>
+                    <span className="font-bold text-teal-800">{t.priority}: {ref.priority === 'emergency' ? (t.emergency || 'Emergency') : ref.priority === 'urgent' ? t.urgent : t.routine}</span>
                   </div>
                   {ref.isAtRisk && (
                     <p className="text-amber-800 font-semibold text-[11px]">

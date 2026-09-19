@@ -47,6 +47,14 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({
   }
 
   if (priority) {
+    if (priority === 'emergency') {
+      return (
+        <span className={`inline-flex items-center rounded-full bg-red-100 text-red-800 border border-red-300 font-bold ${sizeClasses[size]} ${className}`}>
+          <AlertTriangle className={size === 'sm' ? 'w-3 h-3 text-red-600' : 'w-3.5 h-3.5 text-red-600'} />
+          <span>{t.priorityEmergencyBadge || '🚨 Emergency Priority'}</span>
+        </span>
+      );
+    }
     if (priority === 'urgent') {
       return (
         <span className={`inline-flex items-center rounded-full bg-red-50 text-red-700 border border-red-200 ${sizeClasses[size]} ${className}`}>

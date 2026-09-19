@@ -327,9 +327,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                       </td>
                       <td className="p-3.5">
                         <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                          ref.priority === 'urgent' ? 'bg-rose-100 text-rose-800' : 'bg-slate-100 text-slate-700'
+                          ref.priority === 'emergency' ? 'bg-red-100 text-red-800 border border-red-200' : ref.priority === 'urgent' ? 'bg-rose-100 text-rose-800' : 'bg-slate-100 text-slate-700'
                         }`}>
-                          {ref.priority === 'urgent' ? t.urgent : t.routine}
+                          {ref.priority === 'emergency' ? (t.emergency || 'Emergency') : ref.priority === 'urgent' ? t.urgent : t.routine}
                         </span>
                       </td>
                       <td className="p-3.5">

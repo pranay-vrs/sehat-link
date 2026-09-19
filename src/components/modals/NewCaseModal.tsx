@@ -24,6 +24,84 @@ import { useReferralStore } from '../../store/referralStore';
 import { Patient, Priority, Facility, GovtScheme, Language } from '../../types';
 import { translations } from '../../data/translations';
 
+export interface VitalsTriageResult {
+  priority: Priority;
+  isEmergency: boolean;
+  emergencyReasons: string[];
+  fieldAlerts: {
+    bp?: string;
+    spo2?: string;
+    temp?: string;
+    pulse?: string;
+  };
+}
+
+export const evaluateVitalsConditions = (
+  bpStr: string,
+  spo2Str: string,
+  tempStr: string,
+  pulseStr: string
+): VitalsTriageResult => {
+  const reasons: string[] = [];
+  const fieldAlerts: VitalsTriageResult['fieldAlerts'] = {};
+
+  // 1. Blood pressure: above 150/100 or below than 100/60 mark that as emergency
+  const bpMatch = bpStr.match(/(\d+)\s*[/]\s*(\d+)/);
+  if (bpMatch) {
+    const systolic = parseInt(bpMatch[1], 10);
+    const diastolic = parseInt(bpMatch[2], 10);
+
+    if (systolic > 150 || diastolic > 100) {
+      const msg = `Blood pressure (${systolic}/${diastolic} mmHg) is above 150/100 mmHg`;
+      reasons.push(msg);
+      fieldAlerts.bp = msg;
+    } else if (systolic < 100 || diastolic < 60) {
+      const msg = `Blood pressure (${systolic}/${diastolic} mmHg) is below 100/60 mmHg`;
+      reasons.push(msg);
+      fieldAlerts.bp = msg;
+    }
+  }
+
+  // 2. Oxygen level (SpO2): below 92% mark that as emergency
+  const spo2Num = parseFloat(spo2Str.replace(/[^0-9.]/g, ''));
+  if (!isNaN(spo2Num) && spo2Num < 92) {
+    const msg = `Oxygen level (SpO2: ${spo2Num}%) is below 92%`;
+    reasons.push(msg);
+    fieldAlerts.spo2 = msg;
+  }
+
+  // 3. Temp: above 102F mark that as emergency
+  const tempNum = parseFloat(tempStr.replace(/[^0-9.]/g, ''));
+  if (!isNaN(tempNum) && tempNum > 102) {
+    const msg = `Temperature (${tempNum}°F) is above 102°F`;
+    reasons.push(msg);
+    fieldAlerts.temp = msg;
+  }
+
+  // 4. Pulse: below 70 or more than 90 mark that as emergency
+  const pulseNum = parseFloat(pulseStr.replace(/[^0-9.]/g, ''));
+  if (!isNaN(pulseNum)) {
+    if (pulseNum < 70) {
+      const msg = `Pulse (${pulseNum} bpm) is below 70 bpm`;
+      reasons.push(msg);
+      fieldAlerts.pulse = msg;
+    } else if (pulseNum > 90) {
+      const msg = `Pulse (${pulseNum} bpm) is more than 90 bpm`;
+      reasons.push(msg);
+      fieldAlerts.pulse = msg;
+    }
+  }
+
+  const isEmergency = reasons.length > 0;
+
+  return {
+    priority: isEmergency ? 'emergency' : 'routine',
+    isEmergency,
+    emergencyReasons: reasons,
+    fieldAlerts
+  };
+};
+
 interface NewCaseModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -48,8 +126,8 @@ export const NewCaseModal: React.FC<NewCaseModalProps> = ({ isOpen, onClose, pre
   const [newAbha, setNewAbha] = useState('');
   const [newCategory, setNewCategory] = useState<'BPL' | 'APL' | 'Tribal / ST' | 'SC' | 'General'>('BPL');
 
-  // Step 3: What is the Problem?
-  const [selectedProblem, setSelectedProblem] = useState<string>('Fever');
+  // Step 3: What is the Problem? (Multi-select)
+  const [selectedProblems, setSelectedProblems] = useState<string[]>(['Fever']);
   const [otherProblemDescription, setOtherProblemDescription] = useState<string>('');
   const [symptoms, setSymptoms] = useState<string[]>(['Fever > 3 days']);
   const [symptomDuration, setSymptomDuration] = useState('3 days');
@@ -71,17 +149,23 @@ export const NewCaseModal: React.FC<NewCaseModalProps> = ({ isOpen, onClose, pre
 
   if (!isOpen) return null;
 
-  // Rule-based triage evaluation (transparent rationale, zero autonomous AI)
-  const isUrgent = 
-    selectedProblem === 'Breathing' ||
-    symptoms.some(s => s.includes('Chest') || s.includes('Breath') || s.includes('High BP')) ||
-    parseInt(spo2) < 94 ||
-    (selectedProblem === 'Pregnancy' && bp.includes('15') || bp.includes('16'));
+  // Toggle problem selection for Step 3
+  const toggleProblem = (key: string) => {
+    setSelectedProblems(prev => {
+      if (prev.includes(key)) {
+        return prev.filter(k => k !== key);
+      } else {
+        return [...prev, key];
+      }
+    });
+  };
 
-  const priority: Priority = isUrgent ? 'urgent' : 'routine';
-  const priorityReason = isUrgent
-    ? 'Urgent priority flagged: Elevated vitals or acute distress indicators present requiring timely Medical Officer evaluation.'
-    : 'Routine priority: Standard primary health center clinical consultation.';
+  // Vitals condition evaluation method
+  const vitalsEval = evaluateVitalsConditions(bp, spo2, temp, pulse);
+  const priority: Priority = vitalsEval.priority;
+  const priorityReason = vitalsEval.isEmergency
+    ? `Emergency flagged: ${vitalsEval.emergencyReasons.join('; ')}. Immediate Medical Officer evaluation required.`
+    : 'Routine checkup: Vitals are within standard threshold ranges. Standard primary health center clinical consultation.';
 
   const filteredPatients = patients.filter(p => 
     p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -124,9 +208,15 @@ export const NewCaseModal: React.FC<NewCaseModalProps> = ({ isOpen, onClose, pre
     const chosenFacility = facilities.find(f => f.id === selectedFacilityId) || facilities[1];
     const chosenScheme = schemes.find(s => s.id === selectedSchemeId);
 
-    const problemDisplay = selectedProblem === 'Other' && otherProblemDescription.trim()
-      ? `Other (${otherProblemDescription.trim()})`
-      : selectedProblem;
+    const problemLabels = selectedProblems.map(key => {
+      if (key === 'Other') {
+        return otherProblemDescription.trim() ? `Other (${otherProblemDescription.trim()})` : (t.problemOther || 'Other');
+      }
+      const found = problemOptions.find(opt => opt.key === key);
+      return found ? found.label : key;
+    });
+
+    const problemDisplay = problemLabels.length > 0 ? problemLabels.join(', ') : 'General Checkup';
 
     const ref = createReferral({
       patientId: selectedPatient.id,
@@ -144,7 +234,7 @@ export const NewCaseModal: React.FC<NewCaseModalProps> = ({ isOpen, onClose, pre
         spo2: spo2,
         pulse: pulse
       },
-      symptoms: [problemDisplay, ...symptoms],
+      symptoms: [...problemLabels, ...symptoms],
       symptomDuration: symptomDuration
     });
 
@@ -156,7 +246,7 @@ export const NewCaseModal: React.FC<NewCaseModalProps> = ({ isOpen, onClose, pre
     setStep(1);
     setSelectedPatient(null);
     setIsRegisteringNew(false);
-    setSelectedProblem('Fever');
+    setSelectedProblems(['Fever']);
     setOtherProblemDescription('');
     setCreatedReferralResult(null);
     onClose();
@@ -341,7 +431,7 @@ export const NewCaseModal: React.FC<NewCaseModalProps> = ({ isOpen, onClose, pre
           {/* STEP 3: WHAT IS THE PROBLEM? */}
           {step === 3 && (
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between gap-2">
                 <div>
                   <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500">
                     {t.thPatient}: <strong className="text-slate-900">{selectedPatient?.name}</strong>
@@ -349,25 +439,40 @@ export const NewCaseModal: React.FC<NewCaseModalProps> = ({ isOpen, onClose, pre
                   <p className="text-sm font-bold text-slate-900 mt-0.5">
                     {t.primaryHealthProblemQ}
                   </p>
+                  <p className="text-[11px] text-teal-700 font-medium mt-0.5">
+                    {t.selectMultipleProblemsHint || 'Select one or more health problems that apply.'}
+                  </p>
                 </div>
+                {selectedProblems.length > 0 && (
+                  <span className="text-[11px] font-bold bg-teal-100 text-teal-800 px-2.5 py-1 rounded-full border border-teal-200 shrink-0">
+                    {selectedProblems.length} {language === 'mr' ? 'समस्या निवडल्या' : language === 'hi' ? 'समस्याएं चुनीं' : (selectedProblems.length === 1 ? 'selected' : 'selected')}
+                  </span>
+                )}
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
                 {problemOptions.map(p => {
                   const Icon = p.icon;
-                  const isSelected = selectedProblem === p.key;
+                  const isSelected = selectedProblems.includes(p.key);
                   return (
                     <button
                       key={p.key}
                       type="button"
-                      onClick={() => setSelectedProblem(p.key)}
-                      className={`p-4 rounded-2xl border-2 text-left transition-all flex flex-col justify-between min-h-[90px] ${
+                      onClick={() => toggleProblem(p.key)}
+                      className={`p-3.5 sm:p-4 rounded-2xl border-2 text-left transition-all flex flex-col justify-between min-h-[95px] relative ${
                         isSelected 
-                          ? 'border-teal-600 bg-teal-50/80 shadow-xs ring-2 ring-teal-200' 
+                          ? 'border-teal-600 bg-teal-50/90 shadow-sm ring-2 ring-teal-200' 
                           : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50'
                       }`}
                     >
-                      <Icon className={`w-6 h-6 ${isSelected ? 'text-teal-700' : 'text-slate-500'}`} />
+                      <div className="flex items-center justify-between w-full">
+                        <Icon className={`w-6 h-6 ${isSelected ? 'text-teal-700' : 'text-slate-500'}`} />
+                        <div className={`w-5 h-5 rounded-full flex items-center justify-center transition-all ${
+                          isSelected ? 'bg-teal-600 text-white shadow-xs' : 'border-2 border-slate-300 bg-white'
+                        }`}>
+                          {isSelected && <Check className="w-3 h-3 stroke-[3]" />}
+                        </div>
+                      </div>
                       <span className={`text-xs font-bold mt-2 ${isSelected ? 'text-teal-950' : 'text-slate-800'}`}>
                         {p.label}
                       </span>
@@ -376,7 +481,7 @@ export const NewCaseModal: React.FC<NewCaseModalProps> = ({ isOpen, onClose, pre
                 })}
               </div>
 
-              {selectedProblem === 'Other' && (
+              {selectedProblems.includes('Other') && (
                 <div className="space-y-1.5 p-3.5 bg-teal-50/70 border border-teal-200 rounded-2xl animate-in fade-in slide-in-from-top-2 duration-200">
                   <div className="flex items-center justify-between">
                     <label className="text-xs font-semibold text-slate-800 flex items-center gap-1.5">
@@ -410,6 +515,12 @@ export const NewCaseModal: React.FC<NewCaseModalProps> = ({ isOpen, onClose, pre
                 />
               </div>
 
+              {selectedProblems.length === 0 && (
+                <p className="text-[11px] text-amber-700 font-medium">
+                  {language === 'mr' ? 'कृपया पुढे जाण्यासाठी किमान एक समस्या निवडा.' : language === 'hi' ? 'कृपया आगे बढ़ने के लिए कम से कम एक समस्या चुनें।' : 'Please select at least one problem to proceed.'}
+                </p>
+              )}
+
               <div className="flex justify-between pt-2">
                 <button
                   type="button"
@@ -420,8 +531,11 @@ export const NewCaseModal: React.FC<NewCaseModalProps> = ({ isOpen, onClose, pre
                 </button>
                 <button
                   type="button"
+                  disabled={selectedProblems.length === 0}
                   onClick={() => setStep(4)}
-                  className="px-5 py-2 bg-teal-700 text-white text-xs font-bold rounded-xl flex items-center gap-1"
+                  className={`px-5 py-2 text-white text-xs font-bold rounded-xl flex items-center gap-1 transition-all ${
+                    selectedProblems.length === 0 ? 'bg-slate-300 cursor-not-allowed' : 'bg-teal-700 hover:bg-teal-800'
+                  }`}
                 >
                   <span>{t.nextVitals}</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -433,57 +547,137 @@ export const NewCaseModal: React.FC<NewCaseModalProps> = ({ isOpen, onClose, pre
           {/* STEP 4: VITALS IF AVAILABLE */}
           {step === 4 && (
             <div className="space-y-4">
-              <div>
-                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                  {t.vitalsTitle}
-                </h4>
-                <p className="text-xs text-slate-500 mt-0.5">
-                  {t.vitalsDesc}
-                </p>
+              <div className="flex items-center justify-between gap-2">
+                <div>
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                    {t.vitalsTitle}
+                  </h4>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    {t.vitalsDesc}
+                  </p>
+                </div>
+                <span className={`text-[11px] font-bold px-2.5 py-1 rounded-full border shrink-0 ${
+                  vitalsEval.isEmergency 
+                    ? 'bg-red-100 text-red-800 border-red-300 animate-pulse'
+                    : 'bg-emerald-100 text-emerald-800 border-emerald-300'
+                }`}>
+                  {vitalsEval.isEmergency ? (t.emergencyPriorityBadge || '🚨 EMERGENCY') : (t.routineCheckupBadge || '🟢 ROUTINE CHECKUP')}
+                </span>
               </div>
 
               <div className="grid grid-cols-2 gap-3 text-xs">
                 <div>
-                  <label className="text-slate-600 block mb-1 font-semibold">{t.bpLabel}</label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="text-slate-600 font-semibold">{t.bpLabel}</label>
+                    {vitalsEval.fieldAlerts.bp && (
+                      <span className="text-[10px] text-red-700 font-bold bg-red-100 px-1.5 py-0.2 rounded">🚨 Emergency</span>
+                    )}
+                  </div>
                   <input
                     type="text"
                     value={bp}
                     onChange={(e) => setBp(e.target.value)}
                     placeholder="120/80"
-                    className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl"
+                    className={`w-full p-2.5 bg-slate-50 border rounded-xl ${
+                      vitalsEval.fieldAlerts.bp ? 'border-red-400 bg-red-50/40 text-red-900 font-medium' : 'border-slate-300'
+                    }`}
                   />
+                  <span className="text-[10px] text-slate-400 block mt-0.5">&gt; 150/100 or &lt; 100/60: Emergency</span>
                 </div>
+
                 <div>
-                  <label className="text-slate-600 block mb-1 font-semibold">{t.spo2Label}</label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="text-slate-600 font-semibold">{t.spo2Label}</label>
+                    {vitalsEval.fieldAlerts.spo2 && (
+                      <span className="text-[10px] text-red-700 font-bold bg-red-100 px-1.5 py-0.2 rounded">🚨 Emergency</span>
+                    )}
+                  </div>
                   <input
                     type="text"
                     value={spo2}
                     onChange={(e) => setSpo2(e.target.value)}
                     placeholder="98%"
-                    className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl"
+                    className={`w-full p-2.5 bg-slate-50 border rounded-xl ${
+                      vitalsEval.fieldAlerts.spo2 ? 'border-red-400 bg-red-50/40 text-red-900 font-medium' : 'border-slate-300'
+                    }`}
                   />
+                  <span className="text-[10px] text-slate-400 block mt-0.5">&lt; 92%: Emergency</span>
                 </div>
+
                 <div>
-                  <label className="text-slate-600 block mb-1 font-semibold">{t.tempLabel}</label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="text-slate-600 font-semibold">{t.tempLabel}</label>
+                    {vitalsEval.fieldAlerts.temp && (
+                      <span className="text-[10px] text-red-700 font-bold bg-red-100 px-1.5 py-0.2 rounded">🚨 Emergency</span>
+                    )}
+                  </div>
                   <input
                     type="text"
                     value={temp}
                     onChange={(e) => setTemp(e.target.value)}
                     placeholder="98.6°F"
-                    className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl"
+                    className={`w-full p-2.5 bg-slate-50 border rounded-xl ${
+                      vitalsEval.fieldAlerts.temp ? 'border-red-400 bg-red-50/40 text-red-900 font-medium' : 'border-slate-300'
+                    }`}
                   />
+                  <span className="text-[10px] text-slate-400 block mt-0.5">&gt; 102°F: Emergency</span>
                 </div>
+
                 <div>
-                  <label className="text-slate-600 block mb-1 font-semibold">{t.pulseLabel}</label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="text-slate-600 font-semibold">{t.pulseLabel}</label>
+                    {vitalsEval.fieldAlerts.pulse && (
+                      <span className="text-[10px] text-red-700 font-bold bg-red-100 px-1.5 py-0.2 rounded">🚨 Emergency</span>
+                    )}
+                  </div>
                   <input
                     type="text"
                     value={pulse}
                     onChange={(e) => setPulse(e.target.value)}
                     placeholder="78"
-                    className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl"
+                    className={`w-full p-2.5 bg-slate-50 border rounded-xl ${
+                      vitalsEval.fieldAlerts.pulse ? 'border-red-400 bg-red-50/40 text-red-900 font-medium' : 'border-slate-300'
+                    }`}
                   />
+                  <span className="text-[10px] text-slate-400 block mt-0.5">&lt; 70 or &gt; 90: Emergency</span>
                 </div>
               </div>
+
+              {/* Real-time Triage Evaluation Banner on Vitals Tab */}
+              {vitalsEval.isEmergency ? (
+                <div className="p-3.5 bg-red-50 border-2 border-red-300 rounded-2xl space-y-1.5 animate-in fade-in duration-200">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-red-900 flex items-center gap-1.5">
+                      <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
+                      <span>{t.emergencyVitalsAlert || 'Emergency Condition Detected'}</span>
+                    </span>
+                    <span className="text-[10px] font-bold bg-red-600 text-white px-2 py-0.5 rounded uppercase">
+                      Emergency
+                    </span>
+                  </div>
+                  <ul className="text-xs text-red-800 list-disc list-inside space-y-0.5 font-medium">
+                    {vitalsEval.emergencyReasons.map((reason, idx) => (
+                      <li key={idx}>{reason}</li>
+                    ))}
+                  </ul>
+                  <p className="text-[10px] text-red-600 italic mt-1">
+                    Automatic clinical rule: Case will be flagged as Emergency referral.
+                  </p>
+                </div>
+              ) : (
+                <div className="p-3 bg-emerald-50 border border-emerald-300 rounded-2xl flex items-center justify-between text-xs animate-in fade-in duration-200">
+                  <div className="flex items-center gap-2 text-emerald-900">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <div>
+                      <span className="font-bold text-xs block">{t.normalVitalsNotice || 'Normal Vitals — Routine Checkup'}</span>
+                      <span className="text-[11px] text-emerald-700">All vitals are within standard ranges. Marked for routine checkup only.</span>
+                    </div>
+                  </div>
+                  <span className="text-[10px] text-emerald-800 font-bold bg-emerald-100 px-2 py-0.5 rounded border border-emerald-300 shrink-0">
+                    {t.routineCheckup || 'Routine Checkup'}
+                  </span>
+                </div>
+              )}
 
               <div className="flex justify-between pt-2">
                 <button
@@ -510,23 +704,32 @@ export const NewCaseModal: React.FC<NewCaseModalProps> = ({ isOpen, onClose, pre
             <div className="space-y-4 text-xs">
               {/* Triage Rationale Box */}
               <div className={`p-4 rounded-2xl border-2 space-y-2 ${
-                priority === 'urgent' ? 'bg-red-50 border-red-300' : 'bg-emerald-50 border-emerald-300'
+                priority === 'emergency' ? 'bg-red-50 border-red-300' : 'bg-emerald-50 border-emerald-300'
               }`}>
                 <div className="flex items-center justify-between">
                   <span className={`font-bold uppercase tracking-wider text-xs ${
-                    priority === 'urgent' ? 'text-red-900' : 'text-emerald-900'
+                    priority === 'emergency' ? 'text-red-900' : 'text-emerald-900'
                   }`}>
-                    {priority === 'urgent' ? t.urgentPriorityBadge : t.routinePriorityBadge}
+                    {priority === 'emergency' 
+                      ? (t.emergencyPriorityBadge || '🚨 EMERGENCY') 
+                      : (t.routineCheckupBadge || t.routinePriorityBadge || '🟢 ROUTINE CHECKUP')}
                   </span>
                   <span className="text-[10px] bg-white px-2 py-0.5 rounded font-bold border">
                     {t.ruleBasedClinicalSupport}
                   </span>
                 </div>
                 <p className="font-semibold text-slate-900">
-                  {priority === 'urgent' 
-                    ? (language === 'mr' ? 'तातडीचे प्राधान्य: शरीराची लक्षणे चिंताजनक आहेत, तात्काळ वैद्यकीय अधिकाऱ्यांची तपासणी आवश्यक आहे.' : language === 'hi' ? 'तत्काल प्राथमिकता: शारीरिक लक्षण चिंताजनक हैं, तत्काल चिकित्सा अधिकारी द्वारा जांच आवश्यक है।' : priorityReason)
-                    : (language === 'mr' ? 'सामान्य प्राधान्य: प्राथमिक आरोग्य केंद्रातील नियमित तपासणी.' : language === 'hi' ? 'सामान्य प्राथमिकता: प्राथमिक स्वास्थ्य केंद्र में नियमित जांच।' : priorityReason)}
+                  {priority === 'emergency' 
+                    ? (language === 'mr' ? 'आणीबाणी प्राधान्य: शरीराची लक्षणे धोक्याच्या पातळीबाहेर आहेत, तात्काळ वैद्यकीय अधिकाऱ्यांची तपासणी आवश्यक आहे.' : language === 'hi' ? 'आपातकालीन प्राथमिकता: शारीरिक लक्षण चिंताजनक हैं, तत्काल चिकित्सा अधिकारी द्वारा जांच आवश्यक है।' : priorityReason)
+                    : (language === 'mr' ? 'नियमित तपासणी: शारीरिक मापदंड सामान्य मर्यादेत आहेत, प्राथमिक आरोग्य केंद्रातील नियमित तपासणी.' : language === 'hi' ? 'नियमित जांच: शारीरिक माप सामान्य सीमा के भीतर हैं, प्राथमिक स्वास्थ्य केंद्र में नियमित जांच।' : priorityReason)}
                 </p>
+                {vitalsEval.emergencyReasons.length > 0 && (
+                  <ul className="text-[11px] text-red-800 list-disc list-inside space-y-0.5 font-medium pl-1">
+                    {vitalsEval.emergencyReasons.map((reason, idx) => (
+                      <li key={idx}>{reason}</li>
+                    ))}
+                  </ul>
+                )}
                 <p className="text-[10px] text-slate-500 italic">
                   <Info className="w-3 h-3 inline mr-1" />
                   {t.triageDisclaimer}

@@ -270,7 +270,7 @@ export const useReferralStore = () => {
       timestamp: timestamp,
       referralId: newId,
       isRead: false,
-      urgency: data.priority === 'urgent' ? 'high' : 'normal',
+      urgency: (data.priority === 'emergency' || data.priority === 'urgent') ? 'high' : 'normal',
       targetRole: 'doctor'
     });
 

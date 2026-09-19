@@ -174,7 +174,7 @@ export const DoctorDashboard: React.FC<DoctorDashboardProps> = ({
                         <span className="text-xs font-mono font-bold text-teal-700">#{ref.careThreadId}</span>
                       </div>
                       <p className="text-xs text-slate-700">
-                        {t.reasonLabel} {ref.referralReason} · {t.priorityLabel} <span className="font-bold text-teal-800">{ref.priority === 'urgent' ? t.urgent : t.routine}</span>
+                        {t.reasonLabel} {ref.referralReason} · {t.priorityLabel} <span className="font-bold text-teal-800">{ref.priority === 'emergency' ? (t.emergency || 'Emergency') : ref.priority === 'urgent' ? t.urgent : t.routine}</span>
                       </p>
                       {ref.vitals && (
                         <p className="text-[11px] text-slate-500">
